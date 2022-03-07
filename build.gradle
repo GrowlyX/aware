@@ -1,0 +1,89 @@
+import java.util.stream.Collectors
+
+plugins {
+    id "maven-publish"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "org.jetbrains.kotlin.jvm" version "1.6.10"
+}
+
+group "gg.scala.aware"
+version "1.0.0"
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
+    compileOnly "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
+
+    implementation "io.lettuce:lettuce-core:6.1.6.RELEASE"
+}
+
+compileKotlin {
+    kotlinOptions.javaParameters = true
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+shadowJar {
+    archiveClassifier.set("")
+
+    exclude "**/*.kotlin_metadata"
+    exclude "**/*.kotlin_builtins"
+    exclude "META-INF/"
+
+    archiveFileName = "aware.jar"
+}
+
+tasks.withType(GenerateMavenPom).all {
+    doLast {
+        final File file = new File(
+                "$buildDir/publications/shadow/pom-default.xml"
+        )
+
+        final BufferedReader br = new BufferedReader(
+                new FileReader(file)
+
+        )
+        final String lines = br.lines()
+                .map((line) -> {
+                    if (line.contains("<dependencies/>")) "" else line
+                })
+                .collect(Collectors.joining("\n"))
+
+        final BufferedWriter wr = new BufferedWriter(
+                new FileWriter(file, true)
+        )
+
+        final PrintWriter writer = new PrintWriter(file)
+        writer.print("")
+        writer.close()
+
+        wr.write(lines)
+        wr.close()
+    }
+}
+
+publishing {
+    publications {
+        shadow(MavenPublication) { publication ->
+            from components.kotlin
+        }
+    }
+
+    repositories {
+        maven {
+            name "Scala"
+            allowInsecureProtocol true
+            url "http://repository.scala.gg/repository/maven-releases/"
+
+            credentials {
+                username property("scala.credentials.username") as String
+                password property("scala.credentials.password") as String
+            }
+        }
+    }
+}
+
+tasks.build.dependsOn(shadowJar, publishShadowPublicationToScalaRepository)
