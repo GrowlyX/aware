@@ -1,8 +1,10 @@
 package gg.scala.aware
 
+import gg.scala.aware.annotation.Subscribe
 import gg.scala.aware.codec.WrappedRedisCodec
 import gg.scala.aware.connection.WrappedRedisPubSubListener
 import gg.scala.aware.context.AwareSubscriptionContext
+import java.lang.reflect.Method
 import java.util.logging.Logger
 import kotlin.reflect.KClass
 
@@ -20,13 +22,46 @@ class Aware<V : Any>(
     val channel: String
 )
 {
-    internal val codecType = getTypes()[0] as KClass<V>
+    private val codecType = getTypes()[0] as KClass<V>
 
     val subscriptions =
         mutableListOf<AwareSubscriptionContext>()
 
     private val client by lazy {
         AwareHub.newClient()
+    }
+
+    fun register(any: Any)
+    {
+        for (method in any.javaClass.methods)
+        {
+            internalRegister(method, any)
+        }
+    }
+
+    private fun internalRegister(
+        method: Method, instance: Any
+    )
+    {
+        val firstParameter = method.parameters[0]
+
+        // we don't want methods without our codec type
+        if (firstParameter.type != codecType.java)
+        {
+            return
+        }
+
+        val context = AwareSubscriptionContext(
+            instance, method, method.annotations.toList()
+        )
+
+        val subscriptions = context
+            .byType<Subscribe>()
+
+        if (subscriptions.isEmpty())
+            return
+
+        this.subscriptions.add(context)
     }
 
     fun connect()
@@ -37,6 +72,7 @@ class Aware<V : Any>(
         connection.addListener(
             WrappedRedisPubSubListener(this, codec)
         )
-    }
 
+        connection.async().subscribe(channel)
+    }
 }
