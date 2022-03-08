@@ -26,7 +26,7 @@ internal class AwareBuilder<V : Any>(
     }
 
     private lateinit var codec: WrappedRedisCodec<V>
-    private lateinit var logger: Logger
+    private var logger = Logger.getAnonymousLogger()
 
     fun codec(
         codec: WrappedRedisCodec<V>
