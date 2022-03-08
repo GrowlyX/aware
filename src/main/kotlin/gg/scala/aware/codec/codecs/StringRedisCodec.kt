@@ -17,4 +17,12 @@ class StringRedisCodec : WrappedRedisCodec<String>()
     override fun decodeFromString(
         string: String, codec: KClass<String>
     ) = string
+
+    override fun interpretPacketId(v: String): String
+    {
+        // We're going to assume the default
+        // formatting for a string received is:
+        // "packetId:some content"
+        return v.split(":")[0]
+    }
 }

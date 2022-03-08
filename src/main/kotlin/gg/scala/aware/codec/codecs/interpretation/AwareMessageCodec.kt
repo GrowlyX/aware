@@ -1,7 +1,8 @@
-package gg.scala.aware.codec.codecs.defaults
+package gg.scala.aware.codec.codecs.interpretation
 
 import gg.scala.aware.codec.codecs.JsonRedisCodec
 import gg.scala.aware.message.AwareMessage
+import java.lang.reflect.Field
 
 /**
  * A default implementation for [JsonRedisCodec]

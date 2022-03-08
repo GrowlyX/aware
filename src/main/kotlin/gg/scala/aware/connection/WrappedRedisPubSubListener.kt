@@ -10,12 +10,12 @@ import io.lettuce.core.pubsub.RedisPubSubListener
  */
 class WrappedRedisPubSubListener<V : Any>(
     private val aware: Aware,
-    chosenCodec: WrappedRedisCodec<V>
+    private val chosenCodec: WrappedRedisCodec<V>
 ) : RedisPubSubListener<String, V>
 {
     override fun message(channel: String, message: V?)
     {
-        TODO("Not yet implemented")
+        val packetIdentifier = chosenCodec
     }
 
     override fun subscribed(channel: String, count: Long)

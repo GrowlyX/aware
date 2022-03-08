@@ -1,6 +1,5 @@
 package gg.scala.aware.codec
 
-import gg.scala.aware.AwareHub
 import gg.scala.aware.getTypes
 import io.lettuce.core.codec.RedisCodec
 import java.nio.ByteBuffer
@@ -18,7 +17,7 @@ import kotlin.reflect.KClass
 abstract class WrappedRedisCodec<V : Any> : RedisCodec<String, V>
 {
     private val utf8Charset = StandardCharsets.UTF_8
-    private val codecType = getTypes()[0] as KClass<V>
+    internal val codecType = getTypes()[0] as KClass<V>
 
     private val emptyByteArray = byteArrayOf()
 
@@ -60,6 +59,8 @@ abstract class WrappedRedisCodec<V : Any> : RedisCodec<String, V>
             }
         )
     }
+
+    abstract fun interpretPacketId(v: V): String
 
     abstract fun encodeToString(v: V): String
     abstract fun decodeFromString(string: String, codec: KClass<V>): Any
