@@ -11,6 +11,8 @@ import gg.scala.aware.uri.WrappedAwareUri
 import gg.scala.aware.codec.codecs.JsonRedisCodec
 import gg.scala.aware.codec.codecs.interpretation.AwareMessageCodec
 import gg.scala.aware.context.AwareThreadContext
+import gg.scala.aware.encryption.AwareEncryptionCodec
+import gg.scala.aware.encryption.providers.Base64EncryptionProvider
 import gg.scala.aware.message.AwareMessage
 import org.jetbrains.annotations.TestOnly
 import java.lang.Thread.sleep
@@ -24,8 +26,8 @@ import kotlin.random.Random
  */
 object AwareTest
 {
-    @TestOnly
-    fun test()
+    @JvmStatic
+    fun main(args: Array<String>)
     {
         val gson = GsonBuilder()
             .setLongSerializationPolicy(LongSerializationPolicy.STRING)
@@ -39,24 +41,27 @@ object AwareTest
             gson
         }
 
+        // encryption ong
+        val encryption = AwareEncryptionCodec.of(
+            AwareMessageCodec, Base64EncryptionProvider
+        )
+
         val aware = AwareBuilder
             .of<AwareMessage>("twitter.com/growlygg")
             // You can do this:
             .codec(AwareMessageCodec)
             // Or you can do this:
-            .codec(object : JsonRedisCodec<AwareMessage>(AwareMessage::class) {
-                override fun getPacketId(v: AwareMessage) = v.packet
-            })
+            .codec(JsonRedisCodec.of { it.packet })
+            // encryption? BASE64
+            .codec(encryption)
             .build()
 
         aware.register(this)
 
-        aware.connect()
-            .thenRun {
-                launchInfinitePublisher(aware)
-            }
+        aware.connect().thenRun {
+            launchInfinitePublisher(aware)
+        }
 
-        // infinisleeper
         thread {
             while (true)
             {

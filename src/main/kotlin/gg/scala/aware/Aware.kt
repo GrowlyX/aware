@@ -12,6 +12,7 @@ import java.util.concurrent.CompletionStage
 import java.util.logging.Logger
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.kotlinFunction
+import kotlin.system.measureTimeMillis
 
 /**
  * The central processor for
@@ -78,6 +79,20 @@ class Aware<V : Any>(
         this.subscriptions.add(context)
     }
 
+    fun ping(): Pair<String, Long>
+    {
+        val pingFunction = {
+            publishConnection.sync().ping()
+        }
+
+        return Pair(
+            pingFunction.invoke(),
+            measureTimeMillis {
+                pingFunction.invoke()
+            },
+        )
+    }
+
     fun connect(): CompletionStage<Void>
     {
         connection = client
@@ -98,13 +113,10 @@ class Aware<V : Any>(
                 }
             }
     }
-    
-    fun close()
+
+    fun shutdown()
     {
-        publishConnection.close()
-        connection.close()
-        
-        client.close()
+        client.shutdown()
     }
 
     private fun scheduleRemoval(context: AwareSubscriptionContext)
