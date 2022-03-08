@@ -41,14 +41,14 @@ data class AwareMessage(
     @Transient
     lateinit var aware: Aware<AwareMessage>
 
-    private val content =
+    val content =
         mutableMapOf<String, String>()
 
     inline fun <reified T> retrieve(key: String): T
     {
         return AwareHub.gson
             .invoke().fromJson(
-                key, T::class.java
+                content[key], T::class.java
             )
     }
 

@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import gg.scala.aware.builder.WrappedAwareUri
 import gg.scala.aware.context.AwareThreadContext
 import io.lettuce.core.RedisClient
+import java.time.Duration
 import java.util.concurrent.Executors
 
 /**
@@ -35,6 +36,9 @@ object AwareHub
         return RedisClient.create(wrappedUri.build())
     }
 
+    @JvmStatic
+    val DEF_TIMEOUT: Duration = Duration.ofSeconds(1L)
+
     fun <T : Any> publish(
         aware: Aware<T>,
         message: T,
@@ -44,11 +48,17 @@ object AwareHub
     {
         if (context == AwareThreadContext.SYNC)
         {
-            aware.connection.sync()
+            aware.publishConnection.sync()
+                .apply {
+                    setTimeout(DEF_TIMEOUT)
+                }
                 .publish(aware.channel, message)
         } else
         {
-            aware.connection.async()
+            aware.publishConnection.async()
+                .apply {
+                    setTimeout(DEF_TIMEOUT)
+                }
                 .publish(aware.channel, message)
         }
     }

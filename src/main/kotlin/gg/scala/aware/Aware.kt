@@ -5,6 +5,7 @@ import gg.scala.aware.annotation.Subscribe
 import gg.scala.aware.codec.WrappedRedisCodec
 import gg.scala.aware.connection.WrappedRedisPubSubListener
 import gg.scala.aware.context.AwareSubscriptionContext
+import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
 import java.lang.reflect.Method
 import java.util.concurrent.CompletionStage
@@ -30,10 +31,13 @@ class Aware<V : Any>(
     val subscriptions =
         mutableListOf<AwareSubscriptionContext>()
 
-    internal lateinit var connection:
+    private lateinit var connection:
             StatefulRedisPubSubConnection<String, V>
 
-    // we don't want it to be instantiated instantly.
+    internal lateinit var publishConnection:
+            StatefulRedisConnection<String, V>
+
+    // we don't want them to be instantiated instantly.
     private val client by lazy {
         AwareHub.newClient()
     }
@@ -83,6 +87,9 @@ class Aware<V : Any>(
         connection.addListener(
             WrappedRedisPubSubListener(this, codec)
         )
+
+        publishConnection = client
+            .connect(codec)
 
         return connection.async().subscribe(channel)
             .thenRun {

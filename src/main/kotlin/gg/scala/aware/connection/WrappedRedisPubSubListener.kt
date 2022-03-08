@@ -43,8 +43,10 @@ class WrappedRedisPubSubListener<V : Any>(
 
         for (context in matches)
         {
-            context.method
-                .invoke(context.instance, message)
+            kotlin.runCatching {
+                context.method
+                    .invoke(context.instance, message)
+            }
         }
     }
 
