@@ -10,7 +10,7 @@ import kotlin.reflect.KClass
  * @author GrowlyX
  * @since 3/7/2022
  */
-class StringRedisCodec : WrappedRedisCodec<String>()
+class StringRedisCodec : WrappedRedisCodec<String>(String::class)
 {
     override fun encodeToString(v: String): String = v
 

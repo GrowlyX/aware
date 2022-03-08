@@ -11,7 +11,6 @@ import gg.scala.aware.codec.codecs.JsonRedisCodec
 import gg.scala.aware.codec.codecs.interpretation.AwareMessageCodec
 import gg.scala.aware.context.AwareThreadContext
 import gg.scala.aware.message.AwareMessage
-import org.junit.jupiter.api.Test
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
@@ -21,8 +20,8 @@ import kotlin.random.Random
  */
 object AwareTest
 {
-    @Test
-    fun testAwarePubSub()
+    @JvmStatic
+    fun main(args: Array<String>)
     {
         val gson = GsonBuilder()
             .setLongSerializationPolicy(LongSerializationPolicy.STRING)
@@ -41,7 +40,7 @@ object AwareTest
             // You can do this:
             .codec(AwareMessageCodec)
             // Or you can do this:
-            .codec(object : JsonRedisCodec<AwareMessage>() {
+            .codec(object : JsonRedisCodec<AwareMessage>(AwareMessage::class) {
                 override fun getPacketId(v: AwareMessage) = v.packet
             })
             .build()

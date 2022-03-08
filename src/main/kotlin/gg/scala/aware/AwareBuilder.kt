@@ -2,6 +2,7 @@ package gg.scala.aware
 
 import gg.scala.aware.codec.WrappedRedisCodec
 import java.util.logging.Logger
+import kotlin.reflect.KClass
 
 /**
  * Allows for an easy, builder-style method to
@@ -11,7 +12,8 @@ import java.util.logging.Logger
  * @since 3/7/2022
  */
 internal class AwareBuilder<V : Any>(
-    private val channel: String
+    private val channel: String,
+    private val codecType: KClass<V>
 )
 {
     companion object
@@ -21,11 +23,12 @@ internal class AwareBuilder<V : Any>(
             channel: String
         ): AwareBuilder<T>
         {
-            return AwareBuilder(channel)
+            return AwareBuilder(channel, T::class)
         }
     }
 
     private lateinit var codec: WrappedRedisCodec<V>
+
     private var logger = Logger.getAnonymousLogger()
 
     fun codec(
@@ -47,7 +50,7 @@ internal class AwareBuilder<V : Any>(
     fun build(): Aware<V>
     {
         return Aware(
-            this.logger, this.codec, this.channel
+            this.logger, this.channel, this.codec, this.codecType
         )
     }
 }

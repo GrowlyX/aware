@@ -1,6 +1,5 @@
 package gg.scala.aware.codec
 
-import gg.scala.aware.getTypes
 import io.lettuce.core.codec.RedisCodec
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
@@ -14,11 +13,11 @@ import kotlin.reflect.KClass
  * @since 3/7/2022
  */
 @Suppress("UNCHECKED_CAST")
-abstract class WrappedRedisCodec<V : Any> : RedisCodec<String, V>
+abstract class WrappedRedisCodec<V : Any>(
+    private val codecType: KClass<V>
+) : RedisCodec<String, V>
 {
     private val utf8Charset = StandardCharsets.UTF_8
-    internal val codecType = getTypes()[0] as Class<V>
-
     private val emptyByteArray = byteArrayOf()
 
     override fun decodeKey(
@@ -36,7 +35,7 @@ abstract class WrappedRedisCodec<V : Any> : RedisCodec<String, V>
             .decode(bytes)
             .toString()
 
-        return decodeFromString(stringForm, codecType.kotlin) as V
+        return decodeFromString(stringForm, codecType) as V
     }
 
     override fun encodeKey(key: String?): ByteBuffer

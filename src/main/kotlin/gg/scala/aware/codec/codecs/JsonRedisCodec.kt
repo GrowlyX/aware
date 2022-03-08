@@ -17,7 +17,9 @@ import kotlin.reflect.jvm.kotlinProperty
  * @author GrowlyX
  * @since 3/7/2022
  */
-abstract class JsonRedisCodec<V : Any> : WrappedRedisCodec<V>()
+abstract class JsonRedisCodec<V : Any>(
+    codec: KClass<V>
+) : WrappedRedisCodec<V>(codec)
 {
     override fun encodeToString(v: V): String =
         useGson { toJson(v) }

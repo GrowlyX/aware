@@ -9,6 +9,7 @@ import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
 import java.lang.reflect.Method
 import java.util.concurrent.CompletionStage
 import java.util.logging.Logger
+import kotlin.reflect.KClass
 import kotlin.reflect.jvm.kotlinFunction
 
 /**
@@ -21,18 +22,18 @@ import kotlin.reflect.jvm.kotlinFunction
 @Suppress("UNCHECKED_CAST")
 class Aware<V : Any>(
     val logger: Logger,
+    val channel: String,
     private val codec: WrappedRedisCodec<V>,
-    val channel: String
+    private val codecType: KClass<V>
 )
 {
-    private val codecType = getTypes()[0] as Class<V>
-
     val subscriptions =
         mutableListOf<AwareSubscriptionContext>()
 
     internal lateinit var connection:
             StatefulRedisPubSubConnection<String, V>
 
+    // we don't want it to be instantiated instantly.
     private val client by lazy {
         AwareHub.newClient()
     }
@@ -49,10 +50,13 @@ class Aware<V : Any>(
         method: Method, instance: Any
     )
     {
+        if (method.parameters.isEmpty())
+            return
+
         val firstParameter = method.parameters[0]
 
         // we don't want methods without our codec type
-        if (firstParameter.type != codecType)
+        if (firstParameter.type != codecType.java)
         {
             return
         }

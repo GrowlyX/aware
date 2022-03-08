@@ -10,10 +10,7 @@ import gg.scala.aware.message.AwareMessage
  * @author GrowlyX
  * @since 3/7/2022
  */
-object AwareMessageCodec : JsonRedisCodec<AwareMessage>()
+object AwareMessageCodec : JsonRedisCodec<AwareMessage>(AwareMessage::class)
 {
-    override fun getPacketId(v: AwareMessage): String
-    {
-        return v.packet
-    }
+    override fun getPacketId(v: AwareMessage) = v.packet
 }
