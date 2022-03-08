@@ -15,7 +15,7 @@ Extensive annotation-based Redis Pub-Sub wrapper for [lettuce](https://lettuce.i
    * More traditional solutions will be implemented in the future.
 
 ## Usage:
-An example pub-sub subscription for an AwareMessage codec:
+An example annotation-based pub-sub subscription for an AwareMessage codec:
 ```kt
 @Subscribe("test")
 @ExpiresIn(30L, TimeUnit.SECONDS)
@@ -25,7 +25,19 @@ fun onTestExpiresIn30Seconds(
 {
     val horse = message.retrieve<String>("horse")
 
-    println("Hey! It's not been 30 seconds. :) ($horse)")
+    println("Hey! This is the \"horse\". ($horse)")
+}
+```
+
+And a lambda-based one:
+```kt
+aware.listen(
+    "test",
+    ExpiresIn(30L, TimeUnit.SECONDS)
+) {
+    val horse = retrieve<String>("horse")
+
+    println("Hey! This is the \"horse\". $horse")
 }
 ```
 
@@ -52,14 +64,19 @@ AwareHub.configure(
 
 An example AwareBuilder configuration:
 ```kt
+// our encryption codec
+val encryption = AwareEncryptionCodec.of(
+    AwareMessageCodec, Base64EncryptionProvider
+)
+    
 val aware = AwareBuilder
-    .of<AwareMessage>("channel")
+    .of<AwareMessage>("twitter.com/growlygg")
     // You can do this:
     .codec(AwareMessageCodec)
     // Or you can do this:
-    .codec(object : JsonRedisCodec<AwareMessage>(AwareMessage::class) {
-        override fun getPacketId(v: AwareMessage) = v.packet
-    })
+    .codec(JsonRedisCodec.of { it.packet })
+    // encryption? sure!
+    .codec(encryption)
     .build()
 ```
 
@@ -70,6 +87,7 @@ val aware = AwareBuilder
  
 ## Other information:
 lettuce-core is automatically shaded into the final shadowJar. kotlin-stdlib & kotlin-reflect are NOT.
+ - Although aware has not been tested in a production enviornment, it has ran perfectly fine under multiple tests.
 
 ## Note:
 If you're using this in a **closed-source** project, please add `GrowlyX` to the project's author section.
