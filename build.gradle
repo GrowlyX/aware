@@ -67,6 +67,8 @@ tasks.withType(GenerateMavenPom).all {
     }
 }
 
+final String usernameValue = property("scala.credentials.username")
+
 publishing {
     publications {
         shadow(MavenPublication) { publication ->
@@ -74,18 +76,27 @@ publishing {
         }
     }
 
-    repositories {
-        maven {
-            name "Scala"
-            allowInsecureProtocol true
-            url "http://repository.scala.gg/repository/maven-releases/"
+    // yes, you're an internal scala developer
+    if (usernameValue != null)
+    {
+        repositories {
+            maven {
+                name "Scala"
+                allowInsecureProtocol true
+                url "http://repository.scala.gg/repository/maven-releases/"
 
-            credentials {
-                username property("scala.credentials.username") as String
-                password property("scala.credentials.password") as String
+                credentials {
+                    username usernameValue
+                    password property("scala.credentials.password") as String
+                }
             }
         }
     }
 }
 
-tasks.build.dependsOn(shadowJar, publishShadowPublicationToScalaRepository)
+tasks.build.dependsOn(shadowJar)
+
+if (usernameValue != null)
+{
+    tasks.build.dependsOn(publishShadowPublicationToScalaRepository)
+}
