@@ -2,6 +2,7 @@ package gg.scala.aware
 
 import com.google.gson.Gson
 import gg.scala.aware.builder.WrappedAwareUri
+import gg.scala.aware.context.AwareThreadContext
 import io.lettuce.core.RedisClient
 import java.util.concurrent.Executors
 
@@ -32,5 +33,23 @@ object AwareHub
     fun newClient(): RedisClient
     {
         return RedisClient.create(wrappedUri.build())
+    }
+
+    fun <T : Any> publish(
+        aware: Aware<T>,
+        message: T,
+        context: AwareThreadContext =
+            AwareThreadContext.ASYNC
+    )
+    {
+        if (context == AwareThreadContext.SYNC)
+        {
+            aware.connection.sync()
+                .publish(aware.channel, message)
+        } else
+        {
+            aware.connection.async()
+                .publish(aware.channel, message)
+        }
     }
 }

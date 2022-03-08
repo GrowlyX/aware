@@ -5,6 +5,7 @@ import gg.scala.aware.annotation.Subscribe
 import gg.scala.aware.codec.WrappedRedisCodec
 import gg.scala.aware.connection.WrappedRedisPubSubListener
 import gg.scala.aware.context.AwareSubscriptionContext
+import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
 import java.lang.reflect.Method
 import java.util.logging.Logger
 import kotlin.reflect.KClass
@@ -27,6 +28,9 @@ class Aware<V : Any>(
 
     val subscriptions =
         mutableListOf<AwareSubscriptionContext>()
+
+    internal lateinit var connection:
+            StatefulRedisPubSubConnection<String, V>
 
     private val client by lazy {
         AwareHub.newClient()
@@ -67,7 +71,7 @@ class Aware<V : Any>(
 
     fun connect()
     {
-        val connection = client
+        connection = client
             .connectPubSub(codec)
 
         connection.addListener(

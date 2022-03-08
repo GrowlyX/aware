@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.LongSerializationPolicy
 import gg.scala.aware.AwareBuilder
 import gg.scala.aware.AwareHub
+import gg.scala.aware.annotation.Subscribe
 import gg.scala.aware.builder.WrappedAwareUri
 import gg.scala.aware.codec.codecs.interpretation.AwareMessageCodec
 import gg.scala.aware.message.AwareMessage
@@ -36,6 +37,9 @@ object AwareTest
             .codec(AwareMessageCodec)
             .build()
 
+        aware.register(this)
         aware.connect()
     }
+
+    @Subscribe("")
 }

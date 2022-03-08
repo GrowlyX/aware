@@ -1,6 +1,8 @@
 package gg.scala.aware.message
 
+import gg.scala.aware.Aware
 import gg.scala.aware.AwareHub
+import gg.scala.aware.context.AwareThreadContext
 
 /**
  * A standardized "message" containing
@@ -18,6 +20,7 @@ data class AwareMessage(
         @JvmStatic
         fun of(
             packet: String,
+            aware: Aware<AwareMessage>,
             vararg pair: Pair<String, Any>
         ): AwareMessage
         {
@@ -27,10 +30,16 @@ data class AwareMessage(
                         assign(it.first, it.second)
                     }
                 }
+                .apply {
+                    this.aware = aware
+                }
 
             return message
         }
     }
+
+    @Transient
+    lateinit var aware: Aware<AwareMessage>
 
     private val content =
         mutableMapOf<String, String>()
@@ -57,5 +66,15 @@ data class AwareMessage(
     fun remove(key: String)
     {
         content.remove(key)
+    }
+
+    fun publish(
+        context: AwareThreadContext =
+            AwareThreadContext.ASYNC
+    )
+    {
+        AwareHub.publish(
+            aware, this, context
+        )
     }
 }
