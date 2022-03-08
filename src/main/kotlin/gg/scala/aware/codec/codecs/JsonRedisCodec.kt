@@ -25,8 +25,8 @@ open class JsonRedisCodec<V : Any> : WrappedRedisCodec<V>()
      * In [AwareMessageCodec]'s case, they do
      * not have to as the default packet field is "packet".
      */
-    open val defaultPacketField: Field = codecType
-        .java.getField("packet")
+    open val defaultPacketField: Field =
+        codecType.getField("packet")
 
     override fun encodeToString(v: V): String =
         useGson { toJson(v) }
