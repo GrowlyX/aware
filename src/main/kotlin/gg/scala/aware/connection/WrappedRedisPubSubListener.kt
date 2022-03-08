@@ -13,35 +13,25 @@ class WrappedRedisPubSubListener<V : Any>(
     chosenCodec: WrappedRedisCodec<V>
 ) : RedisPubSubListener<String, V>
 {
-    override fun message(channel: String, message: V)
-    {
-        TODO("Not yet implemented")
-    }
-
-    override fun message(
-        pattern: String, channel: String, message: V
-    )
+    override fun message(channel: String, message: V?)
     {
         TODO("Not yet implemented")
     }
 
     override fun subscribed(channel: String, count: Long)
     {
-        TODO("Not yet implemented")
-    }
-
-    override fun psubscribed(pattern: String, count: Long)
-    {
-        TODO("Not yet implemented")
+        aware.logger.info("Subscribed through aware on \"${aware.channel}\".")
     }
 
     override fun unsubscribed(channel: String, count: Long)
     {
-        TODO("Not yet implemented")
+        aware.logger.info("Unsubscribed from aware on \"${aware.channel}\".")
     }
 
-    override fun punsubscribed(pattern: String, count: Long)
-    {
-        TODO("Not yet implemented")
-    }
+    override fun psubscribed(pattern: String, count: Long) = Unit
+    override fun punsubscribed(pattern: String, count: Long) = Unit
+
+    override fun message(
+        pattern: String, channel: String, message: V?
+    ) = Unit
 }
