@@ -12,7 +12,7 @@ import io.lettuce.core.pubsub.RedisPubSubListener
  * @since 3/7/2022
  */
 class WrappedRedisPubSubListener<V : Any>(
-    private val aware: Aware,
+    private val aware: Aware<V>,
     private val chosenCodec: WrappedRedisCodec<V>
 ) : RedisPubSubListener<String, V>
 {

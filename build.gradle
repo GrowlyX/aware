@@ -21,6 +21,9 @@ dependencies {
     compileOnly 'com.google.code.gson:gson:2.9.0'
 
     implementation "io.lettuce:lettuce-core:6.1.6.RELEASE"
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    testImplementation 'com.google.code.gson:gson:2.9.0'
 }
 
 compileKotlin {
