@@ -5,6 +5,9 @@ import gg.scala.aware.codec.WrappedRedisCodec
 import io.lettuce.core.pubsub.RedisPubSubListener
 
 /**
+ * A wrapped form of [RedisPubSubListener] containing
+ * all of our interpretation & distribution functionality.
+ *
  * @author GrowlyX
  * @since 3/7/2022
  */
@@ -15,7 +18,16 @@ class WrappedRedisPubSubListener<V : Any>(
 {
     override fun message(channel: String, message: V?)
     {
+        if (message == null)
+        {
+            aware.logger.warning("We received a NULL message.")
+            return
+        }
+
         val packetIdentifier = chosenCodec
+            .interpretPacketId(message)
+
+        // TODO: 3/7/2022 match packetIdentifier -> available annotated functions.
     }
 
     override fun subscribed(channel: String, count: Long)
@@ -28,6 +40,9 @@ class WrappedRedisPubSubListener<V : Any>(
         aware.logger.info("Unsubscribed from aware on \"${aware.channel}\".")
     }
 
+    /**
+     * We don't use any of the following methods.
+     */
     override fun psubscribed(pattern: String, count: Long) = Unit
     override fun punsubscribed(pattern: String, count: Long) = Unit
 
