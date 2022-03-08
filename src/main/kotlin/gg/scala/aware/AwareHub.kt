@@ -10,7 +10,7 @@ import io.lettuce.core.RedisClient
  */
 object AwareHub
 {
-    lateinit var wrappedUri: WrappedAwareUri
+    private lateinit var wrappedUri: WrappedAwareUri
 
     // TODO: 3/7/2022 allow for multiple
     //  serialization providers
