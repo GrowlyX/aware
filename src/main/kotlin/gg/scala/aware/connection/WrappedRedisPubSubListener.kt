@@ -18,16 +18,21 @@ class WrappedRedisPubSubListener<V : Any>(
 {
     override fun message(channel: String, message: V?)
     {
+        // making sure this message is from a
+        // channel we're looking for
+        if (channel != aware.channel)
+            return
+
         if (message == null)
         {
-            aware.logger.warning("We received a NULL message.")
+            aware.logger.warning("We received a null message.")
             return
         }
 
         val packetIdentifier = chosenCodec
             .interpretPacketId(message)
 
-        // TODO: 3/7/2022 match packetIdentifier -> available annotated functions.
+
     }
 
     override fun subscribed(channel: String, count: Long)
