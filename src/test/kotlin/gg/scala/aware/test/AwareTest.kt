@@ -12,6 +12,7 @@ import gg.scala.aware.codec.codecs.JsonRedisCodec
 import gg.scala.aware.codec.codecs.interpretation.AwareMessageCodec
 import gg.scala.aware.context.AwareThreadContext
 import gg.scala.aware.message.AwareMessage
+import org.jetbrains.annotations.TestOnly
 import java.lang.Thread.sleep
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
@@ -23,8 +24,8 @@ import kotlin.random.Random
  */
 object AwareTest
 {
-    @JvmStatic
-    fun main(args: Array<String>)
+    @TestOnly
+    fun test()
     {
         val gson = GsonBuilder()
             .setLongSerializationPolicy(LongSerializationPolicy.STRING)
