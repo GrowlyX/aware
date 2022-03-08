@@ -20,7 +20,6 @@ import kotlin.reflect.jvm.kotlinFunction
  * @author GrowlyX
  * @since 3/7/2022
  */
-@Suppress("UNCHECKED_CAST")
 class Aware<V : Any>(
     val logger: Logger,
     val channel: String,
