@@ -7,10 +7,8 @@ import gg.scala.aware.connection.WrappedRedisPubSubListener
 import gg.scala.aware.context.AwareSubscriptionContext
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
 import java.lang.reflect.Method
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.logging.Logger
-import kotlin.reflect.KClass
 
 /**
  * The central processor for
@@ -26,7 +24,7 @@ class Aware<V : Any>(
     val channel: String
 )
 {
-    private val codecType = getTypes()[0] as KClass<V>
+    private val codecType = getTypes()[0] as Class<V>
 
     val subscriptions =
         mutableListOf<AwareSubscriptionContext>()
@@ -53,7 +51,7 @@ class Aware<V : Any>(
         val firstParameter = method.parameters[0]
 
         // we don't want methods without our codec type
-        if (firstParameter.type != codecType.java)
+        if (firstParameter.type != codecType)
         {
             return
         }

@@ -21,8 +21,7 @@ import kotlin.random.Random
 object AwareTest
 {
     @Test
-    @JvmStatic
-    fun main(args: Array<String>)
+    fun testAwarePubSub()
     {
         val gson = GsonBuilder()
             .setLongSerializationPolicy(LongSerializationPolicy.STRING)

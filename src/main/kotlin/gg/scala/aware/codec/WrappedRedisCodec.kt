@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
 abstract class WrappedRedisCodec<V : Any> : RedisCodec<String, V>
 {
     private val utf8Charset = StandardCharsets.UTF_8
-    internal val codecType = getTypes()[0] as KClass<V>
+    internal val codecType = getTypes()[0] as Class<V>
 
     private val emptyByteArray = byteArrayOf()
 
@@ -36,7 +36,7 @@ abstract class WrappedRedisCodec<V : Any> : RedisCodec<String, V>
             .decode(bytes)
             .toString()
 
-        return decodeFromString(stringForm, codecType) as V
+        return decodeFromString(stringForm, codecType.kotlin) as V
     }
 
     override fun encodeKey(key: String?): ByteBuffer
