@@ -2,7 +2,7 @@ package gg.scala.aware.message
 
 import gg.scala.aware.Aware
 import gg.scala.aware.AwareHub
-import gg.scala.aware.context.AwareThreadContext
+import gg.scala.aware.thread.AwareThreadContext
 
 /**
  * A standardized "message" containing

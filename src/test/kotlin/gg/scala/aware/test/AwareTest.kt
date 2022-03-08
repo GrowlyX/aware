@@ -10,11 +10,10 @@ import gg.scala.aware.annotation.Subscribe
 import gg.scala.aware.uri.WrappedAwareUri
 import gg.scala.aware.codec.codecs.JsonRedisCodec
 import gg.scala.aware.codec.codecs.interpretation.AwareMessageCodec
-import gg.scala.aware.context.AwareThreadContext
+import gg.scala.aware.thread.AwareThreadContext
 import gg.scala.aware.encryption.AwareEncryptionCodec
 import gg.scala.aware.encryption.providers.Base64EncryptionProvider
 import gg.scala.aware.message.AwareMessage
-import org.jetbrains.annotations.TestOnly
 import java.lang.Thread.sleep
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
@@ -56,7 +55,16 @@ object AwareTest
             .codec(encryption)
             .build()
 
-        aware.register(this)
+        aware.listen(this)
+
+        aware.listen(
+            "test",
+            ExpiresIn(30L, TimeUnit.SECONDS)
+        ) {
+            val horse = retrieve<String>("horse")
+
+            println("Lets go, hasn't been 30s? $horse")
+        }
 
         aware.connect().thenRun {
             launchInfinitePublisher(aware)

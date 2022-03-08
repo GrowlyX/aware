@@ -2,7 +2,7 @@ package gg.scala.aware
 
 import com.google.gson.Gson
 import gg.scala.aware.uri.WrappedAwareUri
-import gg.scala.aware.context.AwareThreadContext
+import gg.scala.aware.thread.AwareThreadContext
 import io.lettuce.core.RedisClient
 import java.time.Duration
 import java.util.concurrent.Executors

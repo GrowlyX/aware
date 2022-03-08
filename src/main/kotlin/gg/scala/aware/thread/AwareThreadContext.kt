@@ -1,4 +1,4 @@
-package gg.scala.aware.context
+package gg.scala.aware.thread
 
 /**
  * Defines the thread context in

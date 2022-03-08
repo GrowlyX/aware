@@ -1,6 +1,4 @@
-package gg.scala.aware.context
-
-import java.lang.reflect.Method
+package gg.scala.aware.subscription
 
 /**
  * Provides context to the method
@@ -9,9 +7,10 @@ import java.lang.reflect.Method
  * @author GrowlyX
  * @since 3/7/2022
  */
-data class AwareSubscriptionContext(
-    val instance: Any,
-    val method: Method,
+data class AwareSubscriptionContext<C>(
+    val caller: Any,
+    val context: C,
+    val contextType: AwareSubscriptionContextType<C>,
     val annotations: List<Annotation>
 )
 {

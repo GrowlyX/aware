@@ -4,7 +4,8 @@ import gg.scala.aware.annotation.ExpiresIn
 import gg.scala.aware.annotation.Subscribe
 import gg.scala.aware.codec.WrappedRedisCodec
 import gg.scala.aware.connection.WrappedRedisPubSubListener
-import gg.scala.aware.context.AwareSubscriptionContext
+import gg.scala.aware.subscription.AwareSubscriptionContext
+import gg.scala.aware.subscription.AwareSubscriptionContextTypes
 import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
 import java.lang.reflect.Method
@@ -29,7 +30,7 @@ class Aware<V : Any>(
 )
 {
     val subscriptions =
-        mutableListOf<AwareSubscriptionContext>()
+        mutableListOf<AwareSubscriptionContext<*>>()
 
     private lateinit var connection:
             StatefulRedisPubSubConnection<String, V>
@@ -42,15 +43,38 @@ class Aware<V : Any>(
         AwareHub.newClient()
     }
 
-    fun register(any: Any)
+    fun listen(
+        packet: String,
+        vararg additionalAnnotations: Annotation,
+        lambda: V.() -> Unit
+    )
+    {
+        val methodContext =
+            AwareSubscriptionContextTypes
+                .LAMBDA.asT<(V) -> Unit>()
+
+        val subscriptions = additionalAnnotations
+            .toMutableList().apply {
+                add(Subscribe(packet))
+            }
+
+        val context = AwareSubscriptionContext(
+            this, lambda,
+            methodContext, subscriptions
+        )
+
+        this.subscriptions.add(context)
+    }
+
+    fun listen(any: Any)
     {
         for (method in any.javaClass.methods)
         {
-            internalRegister(method, any)
+            internalListen(method, any)
         }
     }
 
-    private fun internalRegister(
+    private fun internalListen(
         method: Method, instance: Any
     )
     {
@@ -65,9 +89,14 @@ class Aware<V : Any>(
             return
         }
 
+        val methodContext =
+            AwareSubscriptionContextTypes.METHOD.asT<Method>()
+
+        val methods = method.kotlinFunction
+            ?.annotations?.toList() ?: method.annotations.toList()
+
         val context = AwareSubscriptionContext(
-            instance, method, method.kotlinFunction
-                ?.annotations?.toList() ?: method.annotations.toList()
+            instance, method, methodContext, methods
         )
 
         val subscriptions = context
@@ -119,7 +148,9 @@ class Aware<V : Any>(
         client.shutdown()
     }
 
-    private fun scheduleRemoval(context: AwareSubscriptionContext)
+    private fun scheduleRemoval(
+        context: AwareSubscriptionContext<*>
+    )
     {
         val expiresIn = context
             .byType<ExpiresIn>()
