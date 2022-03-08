@@ -16,17 +16,13 @@ import kotlin.reflect.KClass
  */
 class JsonRedisCodec<V : Any> : WrappedRedisCodec<V>()
 {
-    override fun encodeToString(v: V): String
-    {
-        return useGson { toJson(v) }
-    }
+    override fun encodeToString(v: V): String =
+        useGson { toJson(v) }
 
     override fun decodeFromString(
         string: String, codec: KClass<V>
-    ): Any
-    {
-        return useGson { fromJson(string, codec.java) }
-    }
+    ): Any =
+        useGson { fromJson(string, codec.java) }
 
     private fun <R> useGson(lambda: Gson.() -> R) =
         AwareHub.gson.invoke().lambda()
