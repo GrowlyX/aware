@@ -1,4 +1,4 @@
-package gg.scala.aware.builder
+package gg.scala.aware.uri
 
 /**
  * Takes in credentials in its raw

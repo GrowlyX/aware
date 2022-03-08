@@ -7,7 +7,7 @@ import gg.scala.aware.AwareBuilder
 import gg.scala.aware.AwareHub
 import gg.scala.aware.annotation.ExpiresIn
 import gg.scala.aware.annotation.Subscribe
-import gg.scala.aware.builder.WrappedAwareUri
+import gg.scala.aware.uri.WrappedAwareUri
 import gg.scala.aware.codec.codecs.JsonRedisCodec
 import gg.scala.aware.codec.codecs.interpretation.AwareMessageCodec
 import gg.scala.aware.context.AwareThreadContext
