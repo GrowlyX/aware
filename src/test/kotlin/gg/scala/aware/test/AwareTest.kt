@@ -7,6 +7,7 @@ import gg.scala.aware.AwareHub
 import gg.scala.aware.annotation.ExpiresIn
 import gg.scala.aware.annotation.Subscribe
 import gg.scala.aware.builder.WrappedAwareUri
+import gg.scala.aware.codec.codecs.JsonRedisCodec
 import gg.scala.aware.codec.codecs.interpretation.AwareMessageCodec
 import gg.scala.aware.context.AwareThreadContext
 import gg.scala.aware.message.AwareMessage
@@ -37,7 +38,12 @@ object AwareTest
 
         val aware = AwareBuilder
             .of<AwareMessage>("twitter.com/growlygg")
+            // You can do this:
             .codec(AwareMessageCodec)
+            // Or you can do this:
+            .codec(object : JsonRedisCodec<AwareMessage>() {
+                override fun getPacketId(v: AwareMessage) = v.packet
+            })
             .build()
 
         aware.register(this)

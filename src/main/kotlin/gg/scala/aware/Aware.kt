@@ -9,6 +9,7 @@ import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
 import java.lang.reflect.Method
 import java.util.concurrent.CompletionStage
 import java.util.logging.Logger
+import kotlin.reflect.jvm.kotlinFunction
 
 /**
  * The central processor for
@@ -57,7 +58,8 @@ class Aware<V : Any>(
         }
 
         val context = AwareSubscriptionContext(
-            instance, method, method.annotations.toList()
+            instance, method, method.kotlinFunction
+                ?.annotations?.toList() ?: method.annotations.toList()
         )
 
         val subscriptions = context
