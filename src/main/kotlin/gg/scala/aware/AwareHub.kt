@@ -2,6 +2,7 @@ package gg.scala.aware
 
 import com.google.gson.Gson
 import gg.scala.aware.builder.WrappedAwareUri
+import io.lettuce.core.RedisClient
 
 /**
  * @author GrowlyX
@@ -22,5 +23,10 @@ object AwareHub
     {
         this.wrappedUri = wrappedUri
         this.gson = provider
+    }
+
+    fun newClient(): RedisClient
+    {
+        return RedisClient.create(wrappedUri.build())
     }
 }

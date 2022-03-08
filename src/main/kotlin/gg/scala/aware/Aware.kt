@@ -11,5 +11,9 @@ class Aware(
     val channel: String
 )
 {
+    private val client by lazy {
+        AwareHub.newClient()
+    }
 
+    fun
 }
