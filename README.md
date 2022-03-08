@@ -1,5 +1,5 @@
 # aware
-Extensive annotation-based Redis Pub-Sub wrapper for [lettuce-core](https://lettuce.io) written in Kotlin.
+Extensive annotation-based Redis Pub-Sub wrapper for [lettuce](https://lettuce.io) written in Kotlin.
  - Aware was written to be a replacement for the very dated [Banana](https://github.com/growlyx/banana) library.
  - Aware allows for both asynchronous and synchronous contexts.
  - Aware contain wrappers for the [RedisCodec<K, V>](https://lettuce.io/core/release/api/io/lettuce/core/codec/RedisCodec.html).
