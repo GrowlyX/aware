@@ -1,6 +1,7 @@
 package gg.scala.aware.connection
 
 import gg.scala.aware.Aware
+import gg.scala.aware.annotation.Subscribe
 import gg.scala.aware.codec.WrappedRedisCodec
 import io.lettuce.core.pubsub.RedisPubSubListener
 
@@ -31,8 +32,20 @@ class WrappedRedisPubSubListener<V : Any>(
 
         val packetIdentifier = chosenCodec
             .interpretPacketId(message)
+            .lowercase()
 
+        val matches = aware.subscriptions
+            .filter {
+                it.byType<Subscribe>().any { subscribe ->
+                    subscribe.value.lowercase() == packetIdentifier
+                }
+            }
 
+        for (context in matches)
+        {
+            context.method
+                .invoke(context.instance, message)
+        }
     }
 
     override fun subscribed(channel: String, count: Long)
