@@ -3,6 +3,7 @@ package gg.scala.aware
 import com.google.gson.Gson
 import gg.scala.aware.builder.WrappedAwareUri
 import io.lettuce.core.RedisClient
+import java.util.concurrent.Executors
 
 /**
  * @author GrowlyX
@@ -10,6 +11,9 @@ import io.lettuce.core.RedisClient
  */
 object AwareHub
 {
+    internal val scheduler = Executors
+        .newSingleThreadScheduledExecutor()
+
     private lateinit var wrappedUri: WrappedAwareUri
 
     // TODO: 3/7/2022 allow for multiple

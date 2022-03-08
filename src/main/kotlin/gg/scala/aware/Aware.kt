@@ -1,5 +1,6 @@
 package gg.scala.aware
 
+import gg.scala.aware.annotation.ExpiresIn
 import gg.scala.aware.annotation.Subscribe
 import gg.scala.aware.codec.WrappedRedisCodec
 import gg.scala.aware.connection.WrappedRedisPubSubListener
@@ -74,5 +75,31 @@ class Aware<V : Any>(
         )
 
         connection.async().subscribe(channel)
+            .thenRun {
+                for (subscription in subscriptions)
+                {
+                    scheduleRemoval(subscription)
+                }
+            }
+    }
+
+    private fun scheduleRemoval(context: AwareSubscriptionContext)
+    {
+        val expiresIn = context
+            .byType<ExpiresIn>()
+
+        if (expiresIn.isNotEmpty())
+        {
+            // ExpiresIn is not repeatable
+            val first = expiresIn[0]
+
+            // schedule the removal of this method
+            AwareHub.scheduler.schedule(
+                {
+                    this.subscriptions.remove(context)
+                },
+                first.duration, first.timeUnit
+            )
+        }
     }
 }
