@@ -7,6 +7,8 @@ import gg.scala.aware.connection.WrappedRedisPubSubListener
 import gg.scala.aware.context.AwareSubscriptionContext
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
 import java.lang.reflect.Method
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionStage
 import java.util.logging.Logger
 import kotlin.reflect.KClass
 
@@ -69,7 +71,7 @@ class Aware<V : Any>(
         this.subscriptions.add(context)
     }
 
-    fun connect()
+    fun connect(): CompletionStage<Void>
     {
         connection = client
             .connectPubSub(codec)
@@ -78,7 +80,7 @@ class Aware<V : Any>(
             WrappedRedisPubSubListener(this, codec)
         )
 
-        connection.async().subscribe(channel)
+        return connection.async().subscribe(channel)
             .thenRun {
                 for (subscription in subscriptions)
                 {
