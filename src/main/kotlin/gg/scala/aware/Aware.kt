@@ -98,6 +98,14 @@ class Aware<V : Any>(
                 }
             }
     }
+    
+    fun close()
+    {
+        publishConnection.close()
+        connection.close()
+        
+        client.close()
+    }
 
     private fun scheduleRemoval(context: AwareSubscriptionContext)
     {
