@@ -52,6 +52,14 @@ data class AwareMessage(
             )
     }
 
+    inline fun <reified T> retrieveNullable(key: String): T?
+    {
+        return AwareHub.gson
+            .invoke().fromJson(
+                content[key], T::class.java
+            )
+    }
+
     operator fun contains(key: String): Boolean
     {
         return content.containsKey(key)
