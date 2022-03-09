@@ -35,7 +35,7 @@ class Aware<V : Any>(
     private lateinit var connection:
             StatefulRedisPubSubConnection<String, V>
 
-    internal lateinit var publishConnection:
+    lateinit var publishConnection:
             StatefulRedisConnection<String, V>
 
     // we don't want them to be instantiated instantly.
