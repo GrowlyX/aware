@@ -26,7 +26,7 @@ class WrappedRedisPubSubListener<V : Any>(
 
         if (message == null)
         {
-            aware.logger.warning("We received a null message.")
+            aware.logger.warning("[Aware] A null message was sent on $channel!")
             return
         }
 
@@ -52,12 +52,12 @@ class WrappedRedisPubSubListener<V : Any>(
 
     override fun subscribed(channel: String, count: Long)
     {
-        aware.logger.info("Subscribed through aware on \"${aware.channel}\".")
+        aware.logger.info("[Aware] Subscribed through aware on \"${aware.channel}\".")
     }
 
     override fun unsubscribed(channel: String, count: Long)
     {
-        aware.logger.info("Unsubscribed from aware on \"${aware.channel}\".")
+        aware.logger.info("[Aware] Unsubscribed from aware on \"${aware.channel}\".")
     }
 
     /**

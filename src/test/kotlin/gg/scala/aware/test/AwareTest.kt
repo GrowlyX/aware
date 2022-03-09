@@ -14,6 +14,7 @@ import gg.scala.aware.thread.AwareThreadContext
 import gg.scala.aware.encryption.AwareEncryptionCodec
 import gg.scala.aware.encryption.providers.Base64EncryptionProvider
 import gg.scala.aware.message.AwareMessage
+import org.junit.jupiter.api.Test
 import java.lang.Thread.sleep
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
@@ -25,8 +26,8 @@ import kotlin.random.Random
  */
 object AwareTest
 {
-    @JvmStatic
-    fun main(args: Array<String>)
+    @Test
+    fun test()
     {
         val gson = GsonBuilder()
             .setLongSerializationPolicy(LongSerializationPolicy.STRING)
