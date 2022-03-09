@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
  * @author GrowlyX
  * @since 3/7/2022
  */
-internal class AwareBuilder<V : Any>(
+class AwareBuilder<V : Any>(
     private val channel: String,
     private val codecType: KClass<V>
 )

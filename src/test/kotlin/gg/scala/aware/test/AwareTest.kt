@@ -37,7 +37,8 @@ object AwareTest
         // or any major "module", or in context of Minecraft, a primary plugin.
         AwareHub.configure(
             WrappedAwareUri()
-        ) {
+        )
+        {
             gson
         }
 
@@ -61,7 +62,8 @@ object AwareTest
         aware.listen(
             "test",
             ExpiresIn(30L, TimeUnit.SECONDS)
-        ) {
+        )
+        {
             val horse = retrieve<String>("horse")
 
             println("Lets go, hasn't been 30s? $horse")

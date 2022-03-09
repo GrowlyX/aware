@@ -43,6 +43,8 @@ class Aware<V : Any>(
         AwareHub.newClient()
     }
 
+    fun internal() = client
+
     fun listen(
         packet: String,
         vararg additionalAnnotations: Annotation,
