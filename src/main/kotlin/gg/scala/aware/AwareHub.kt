@@ -43,7 +43,8 @@ object AwareHub
         aware: Aware<T>,
         message: T,
         context: AwareThreadContext =
-            AwareThreadContext.ASYNC
+            AwareThreadContext.ASYNC,
+        channel: String = aware.channel,
     )
     {
         if (context == AwareThreadContext.SYNC)
@@ -52,14 +53,14 @@ object AwareHub
                 .apply {
                     setTimeout(DEF_TIMEOUT)
                 }
-                .publish(aware.channel, message)
+                .publish(channel, message)
         } else
         {
             aware.publishConnection.async()
                 .apply {
                     setTimeout(DEF_TIMEOUT)
                 }
-                .publish(aware.channel, message)
+                .publish(channel, message)
         }
     }
 }

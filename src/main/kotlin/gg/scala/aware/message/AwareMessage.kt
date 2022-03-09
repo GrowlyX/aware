@@ -78,11 +78,12 @@ data class AwareMessage(
 
     fun publish(
         context: AwareThreadContext =
-            AwareThreadContext.ASYNC
+            AwareThreadContext.ASYNC,
+        channel: String = aware.channel
     )
     {
         AwareHub.publish(
-            aware, this, context
+            aware, this, context, channel
         )
     }
 }
