@@ -14,6 +14,9 @@ Extensive annotation-based Redis Pub-Sub wrapper for [lettuce](https://lettuce.i
  - Aware is an annotation-based.
    * More traditional solutions will be implemented in the future.
 
+## Conversations:
+Aware has a W.I.P. conversation feature, where A can contact B and await for a reply (which could possibly be empty).
+
 ## Usage:
 An example annotation-based pub-sub subscription for an AwareMessage codec:
 ```kt
