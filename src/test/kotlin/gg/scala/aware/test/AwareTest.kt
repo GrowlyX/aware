@@ -10,12 +10,18 @@ import gg.scala.aware.annotation.Subscribe
 import gg.scala.aware.uri.WrappedAwareUri
 import gg.scala.aware.codec.codecs.JsonRedisCodec
 import gg.scala.aware.codec.codecs.interpretation.AwareMessageCodec
+import gg.scala.aware.conversation.ConversationContinuation
+import gg.scala.aware.conversation.ConversationFactoryBuilder
+import gg.scala.aware.conversation.messages.ConversationMessage
+import gg.scala.aware.conversation.messages.ConversationMessageResponse
 import gg.scala.aware.thread.AwareThreadContext
 import gg.scala.aware.encryption.AwareEncryptionCodec
 import gg.scala.aware.encryption.providers.Base64EncryptionProvider
 import gg.scala.aware.message.AwareMessage
 import org.junit.jupiter.api.Test
+import reactor.core.Disposable.Composite
 import java.lang.Thread.sleep
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 import kotlin.random.Random
@@ -42,19 +48,12 @@ object AwareTest
             gson
         }
 
-        // encryption ong
-        val encryption = AwareEncryptionCodec.of(
-            AwareMessageCodec, Base64EncryptionProvider
-        )
-
         val aware = AwareBuilder
             .of<AwareMessage>("twitter.com/growlygg")
             // You can do this:
             .codec(AwareMessageCodec)
             // Or you can do this:
             .codec(JsonRedisCodec.of { it.packet })
-            // encryption? BASE64
-            .codec(encryption)
             .build()
 
         aware.listen(this)
@@ -73,13 +72,52 @@ object AwareTest
             launchInfinitePublisher(aware)
         }
 
-        thread {
-            while (true)
-            {
-                sleep(Long.MAX_VALUE)
+        val conversationFactory = ConversationFactoryBuilder
+            .of<ConversationMessageImpl, ConversationResponseImpl>()
+            .channel("big-monkey")
+            .timeout(2L, TimeUnit.SECONDS) {
+                println("Lmao no response dam")
             }
+            .response {
+                ConversationResponseImpl(
+                    "on god", it.uniqueId
+                )
+            }
+            .receive { message, response ->
+                println("Original msg: ${message.message}")
+                println("Response: ${response.message}")
+
+                return@receive ConversationContinuation.END
+            }
+            .build()
+
+        conversationFactory.configure()
+            .thenRun {
+                thread {
+                    while (true)
+                    {
+                        conversationFactory.distribute(
+                            ConversationMessageImpl("Heyyy${Random.nextFloat()}")
+                        )
+
+                        sleep(1000L)
+                    }
+                }
+            }
+
+        while (true)
+        {
+            sleep(Long.MAX_VALUE)
         }
     }
+
+    class ConversationResponseImpl(
+        val message: String, uniqueId: UUID
+    ) : ConversationMessageResponse(uniqueId)
+
+    class ConversationMessageImpl(
+        val message: String
+    ) : ConversationMessage()
 
     fun launchInfinitePublisher(
         aware: Aware<AwareMessage>

@@ -7,8 +7,8 @@ import gg.scala.aware.AwareHub
 import gg.scala.aware.codec.codecs.JsonRedisCodec
 import gg.scala.aware.conversation.messages.ConversationMessage
 import gg.scala.aware.conversation.messages.ConversationMessageResponse
-import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
-import java.util.UUID
+import java.util.*
+import java.util.concurrent.CompletionStage
 import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
 
@@ -72,20 +72,8 @@ class ConversationFactory<T : ConversationMessage, U : ConversationMessageRespon
             .build()
     }
 
-    private lateinit var outgoingConnection:
-            StatefulRedisPubSubConnection<String, T>
-
-    private lateinit var incomingConnection:
-            StatefulRedisPubSubConnection<String, U>
-
-    fun configure()
+    fun configure(): CompletionStage<Void>
     {
-        outgoingConnection = outgoing
-            .internal().connectPubSub(message)
-
-        incomingConnection = incoming
-            .internal().connectPubSub(response)
-
         outgoing.listen("") {
             val processed =
                 processorFunction.invoke(this)
@@ -102,7 +90,7 @@ class ConversationFactory<T : ConversationMessage, U : ConversationMessageRespon
         incoming.listen("") {
             // check if the call context is
             // the same as our unique id
-            if (callContext == uniqueId)
+            if (callContext != uniqueId)
                 return@listen
 
             // check if the message has
@@ -123,6 +111,11 @@ class ConversationFactory<T : ConversationMessage, U : ConversationMessageRespon
                 messages.invalidate(origin)
             }
         }
+
+        return incoming.connect()
+            .thenCompose {
+                outgoing.connect()
+            }
     }
 
     fun distribute(message: T)
