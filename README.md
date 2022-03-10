@@ -1,5 +1,5 @@
 # aware
-Extensive annotation-based Redis Pub-Sub wrapper for [lettuce](https://lettuce.io) written in Kotlin.
+Extensive annotation-based [Redis](https://redis.com/) Pub-Sub wrapper for [lettuce](https://lettuce.io) written in Kotlin.
  - Aware was written to be a replacement for the very dated [Banana](https://github.com/growlyx/banana) library.
  - Aware allows for both asynchronous and synchronous contexts.
  - Aware contain wrappers for the [RedisCodec<K, V>](https://lettuce.io/core/release/api/io/lettuce/core/codec/RedisCodec.html).
@@ -15,11 +15,50 @@ Extensive annotation-based Redis Pub-Sub wrapper for [lettuce](https://lettuce.i
    * More traditional solutions will be implemented in the future.
 
 ## Conversations:
-Aware has a W.I.P. conversation feature, where A can contact B and await for a reply (which could possibly be empty).
+Aware has a conversation feature where A can contact B and await for a reply (which could possibly be empty).
+
+### Conversation models:
+Conversations require you to create your own implementation of ConversationMessage & ConversationMessageResponse.
+ - These models can contain anything which is serializable by the [Gson](https://github.com/google/gson) instance provided in your AwareHub configuration.
+ - The response model must contain the `uniqueId` of the origin message to allow it to be processed back on the original application.
+ 
+### Channel naming:
+Conversation factories require a channel suffix, which will then used for both outgoing and incoming channels.
+ - **Outgoing:**
+   - `og-${suffix}`
+ - **Incoming:**
+   - `ic-${suffix}`
+
+How to create a new ConversationFactory:
+```kotlin
+val conversationFactory = ConversationFactoryBuilder
+    .of<ConversationMessageImpl, ConversationResponseImpl>()
+    // your channel suffix
+    .channel("big-monkey")
+    // your timeout, this is not optional.
+    .timeout(2L, TimeUnit.SECONDS) {
+        println("Lmao no response dam")
+    }
+    // what will be handled on the response of a message
+    // the origin ConversationMessage is supplied as a lambda parameter
+    .response {
+        ConversationResponseImpl(
+            "on god", it.uniqueId
+        )
+    }
+    // what will be handled when our backend receives a response to a message
+    .receive { message, response ->
+        println("Original msg: ${message.message}")
+        println("Response: ${response.message}")
+
+        return@receive ConversationContinuation.END
+    }
+    .build()
+```
 
 ## Usage:
 An example annotation-based pub-sub subscription for an AwareMessage codec:
-```kt
+```kotlin
 @Subscribe("test")
 @ExpiresIn(30L, TimeUnit.SECONDS)
 fun onTestExpiresIn30Seconds(
@@ -33,7 +72,7 @@ fun onTestExpiresIn30Seconds(
 ```
 
 And a lambda-based one:
-```kt
+```kotlin
 aware.listen(
     "test",
     ExpiresIn(30L, TimeUnit.SECONDS)
@@ -45,7 +84,7 @@ aware.listen(
 ```
 
 An example AwareMessage use case:
-```kt
+```kotlin
 AwareMessage.of(
     "test", aware,
     "horse" to "heyy-${Random.nextFloat()}"
@@ -56,7 +95,7 @@ AwareMessage.of(
 ```
 
 An example AwareHub configuration:
-```kt
+```kotlin
 AwareHub.configure(
     // the default credentials would be localhost:6379, no password.
     WrappedAwareUri() 
@@ -66,20 +105,13 @@ AwareHub.configure(
 ```
 
 An example AwareBuilder configuration:
-```kt
-// our encryption codec
-val encryption = AwareEncryptionCodec.of(
-    AwareMessageCodec, Base64EncryptionProvider
-)
-    
+```kotlin
 val aware = AwareBuilder
     .of<AwareMessage>("twitter.com/growlygg")
     // You can do this:
     .codec(AwareMessageCodec)
     // Or you can do this:
     .codec(JsonRedisCodec.of { it.packet })
-    // encryption? sure!
-    .codec(encryption)
     .build()
 ```
 
