@@ -1,5 +1,5 @@
 # aware
-Extensive annotation-based [Redis](https://redis.com/) Pub-Sub wrapper for [lettuce](https://lettuce.io) written in Kotlin.
+Extensive annotation-based [Redis](https://redis.com/) Pub-Sub wrapper for [lettuce](https://lettuce.io) written in [Kotlin](https://kotlinlang.org/).
  - Aware was written to be a replacement for the very dated [Banana](https://github.com/growlyx/banana) library.
  - Aware allows for both asynchronous and synchronous contexts.
  - Aware contain wrappers for the [RedisCodec<K, V>](https://lettuce.io/core/release/api/io/lettuce/core/codec/RedisCodec.html).
@@ -121,8 +121,9 @@ val aware = AwareBuilder
  - Allow for traditional, lambda based subscriptions.
  
 ## Other information:
-lettuce-core is automatically shaded into the final shadowJar. kotlin-stdlib & kotlin-reflect are NOT.
- - Although aware has not been tested in a production enviornment, it has ran perfectly fine under multiple tests.
+lettuce-core is automatically shaded into the final shadowJar. [kotlin-stdlib](https://kotlinlang.org/api/latest/jvm/stdlib/) & kotlin-reflect are NOT.
+ - Although aware has not been tested in a production environment, it has run perfectly fine under multiple tests.
+   - _All of aware's features have now been testing._
 
 ## Note:
 If you're using this in a **closed-source** project, please add `GrowlyX` to the project's author section.
