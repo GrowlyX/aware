@@ -35,9 +35,17 @@ class WrappedRedisPubSubListener<V : Any>(
             .lowercase()
 
         val matches = aware.subscriptions
-            .filter {
-                it.byType<Subscribe>().any { subscribe ->
-                    subscribe.value.lowercase() == packetIdentifier
+            .let {
+                if (!aware.ignorePacketId)
+                {
+                    return@let it.filter { ctx ->
+                        ctx.byType<Subscribe>().any { subscribe ->
+                            subscribe.value.lowercase() == packetIdentifier
+                        }
+                    }
+                } else
+                {
+                    return@let it
                 }
             }
 

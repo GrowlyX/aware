@@ -15,15 +15,21 @@ repositories {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
-    implementation "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
+    compileOnly "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
 
-    implementation 'com.google.code.gson:gson:2.9.0'
+    compileOnly 'com.google.code.gson:gson:2.9.0'
 
+    implementation 'com.github.ben-manes.caffeine:caffeine:2.9.3'
     implementation "io.lettuce:lettuce-core:6.1.6.RELEASE"
 
     testImplementation 'com.google.code.gson:gson:2.9.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+
+    testImplementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
+    testImplementation "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
+
+    testImplementation 'com.google.code.gson:gson:2.9.0'
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }

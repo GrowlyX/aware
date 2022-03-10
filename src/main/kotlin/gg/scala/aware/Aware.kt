@@ -10,6 +10,7 @@ import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
 import java.lang.reflect.Method
 import java.util.concurrent.CompletionStage
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.logging.Logger
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.kotlinFunction
@@ -25,12 +26,13 @@ import kotlin.system.measureTimeMillis
 class Aware<V : Any>(
     val logger: Logger,
     val channel: String,
+    val ignorePacketId: Boolean,
     private val codec: WrappedRedisCodec<V>,
     private val codecType: KClass<V>
 )
 {
     val subscriptions =
-        mutableListOf<AwareSubscriptionContext<*>>()
+        CopyOnWriteArrayList<AwareSubscriptionContext<*>>()
 
     private lateinit var connection:
             StatefulRedisPubSubConnection<String, V>
