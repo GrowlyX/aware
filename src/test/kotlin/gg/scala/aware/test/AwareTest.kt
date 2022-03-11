@@ -15,11 +15,9 @@ import gg.scala.aware.conversation.ConversationFactoryBuilder
 import gg.scala.aware.conversation.messages.ConversationMessage
 import gg.scala.aware.conversation.messages.ConversationMessageResponse
 import gg.scala.aware.thread.AwareThreadContext
-import gg.scala.aware.encryption.AwareEncryptionCodec
-import gg.scala.aware.encryption.providers.Base64EncryptionProvider
 import gg.scala.aware.message.AwareMessage
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import reactor.core.Disposable.Composite
 import java.lang.Thread.sleep
 import java.util.UUID
 import java.util.concurrent.TimeUnit
@@ -33,7 +31,115 @@ import kotlin.random.Random
 object AwareTest
 {
     @Test
-    fun test()
+    fun onParallelogramTest2()
+    {
+        val angleOne = 228
+        val angleTwo = 97
+
+        val elements = listOf(2, 3)
+
+        val totalInternal = 360
+
+        val remaining =
+            totalInternal - (angleOne + angleTwo)
+
+        val denominator =
+            elements.sum()
+
+        println("Parallelogram Test 2:")
+
+        for (element in elements)
+        {
+            val experimental =
+                element / denominator.toDouble()
+
+            println(
+                "$element: ${experimental * remaining}"
+            )
+        }
+    }
+
+    @Test
+    fun onParallelogramTest()
+    {
+        val initialAngle = 18
+        val totalInternal = 360
+
+        val other = (totalInternal - (initialAngle * 2)) / 2
+
+        println()
+        println("Parallelogram Test:")
+        println("$initialAngle, $other, $other")
+    }
+
+    @Test
+    @Disabled
+    fun onPerformanceTest()
+    {
+        val gson = GsonBuilder()
+            .setLongSerializationPolicy(LongSerializationPolicy.STRING)
+            .create()
+
+        // this can be called on your platform initialization,
+        // or any major "module", or in context of Minecraft, a primary plugin.
+        AwareHub.configure(
+            WrappedAwareUri()
+        )
+        {
+            gson
+        }
+
+        val runs = 1000
+
+        val aware = AwareBuilder
+            .of<AwareMessage>("perf")
+            .codec(AwareMessageCodec)
+            .build()
+
+        val connection = measured {
+            aware.internal().connect()
+        }
+
+        val sync = connection.second.sync()
+
+        val hSet = measured {
+            for (i in 0..runs)
+            {
+                sync.hset("lettuce-test", "$i", "horse!")
+            }
+        }
+
+        val hGet = measured {
+            for (i in 0..runs)
+            {
+                sync.hget("lettuce-test", "$i")
+            }
+        }
+
+        println("Lettuce (sync):")
+        println("  Connection: ${connection.first}")
+
+        println("  HSET: ${hSet.first}ms")
+        println("    avg: ${hSet.first / runs}ms")
+
+        println("  HGET: ${hGet.first}ms")
+        println("    avg: ${hGet.first / runs}ms")
+    }
+
+    fun <T> measured(lambda: () -> T): Pair<Long, T>
+    {
+        val start = System.currentTimeMillis()
+        val value = lambda.invoke()
+
+        return Pair(
+            System.currentTimeMillis() - start,
+            value
+        )
+    }
+
+    @Test
+    @Disabled
+    fun testGeneric()
     {
         val gson = GsonBuilder()
             .setLongSerializationPolicy(LongSerializationPolicy.STRING)
