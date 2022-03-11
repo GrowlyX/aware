@@ -116,9 +116,7 @@ val aware = AwareBuilder
 ```
 
 ## Future plans:
- - Allow for upstream message encryption, after the provided `WrappedRedisCodec<V>` does its thing.
- - Allow for conversation channels (A -> B, B -> A) (Both sides are notified of the opposite response)
- - Allow for traditional, lambda based subscriptions.
+ - None yet! Message me on Discord (growly#4953) if you have any suggestions!
  
 ## Other information:
 lettuce-core is automatically shaded into the final shadowJar. [kotlin-stdlib](https://kotlinlang.org/api/latest/jvm/stdlib/) & kotlin-reflect are NOT.
