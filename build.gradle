@@ -71,7 +71,14 @@ tasks.withType(GenerateMavenPom).all {
     }
 }
 
-final String usernameValue = property("scala.credentials.username")
+String usernameValue = null
+
+try {
+    usernameValue = property("scala.credentials.username")
+} catch (Exception ignored)
+{
+
+}
 
 publishing {
     publications {

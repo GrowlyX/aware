@@ -7,6 +7,7 @@ import gg.scala.aware.AwareHub
 import gg.scala.aware.codec.codecs.JsonRedisCodec
 import gg.scala.aware.conversation.messages.ConversationMessage
 import gg.scala.aware.conversation.messages.ConversationMessageResponse
+import java.io.Closeable
 import java.util.*
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.TimeUnit
@@ -28,7 +29,7 @@ class ConversationFactory<T : ConversationMessage, U : ConversationMessageRespon
     timeoutFunction: (T) -> Unit,
     private val processorFunction: (T) -> U,
     private val responseFunction: (T, U) -> ConversationContinuation
-)
+) : Closeable
 {
     private val uniqueId = UUID.randomUUID()
 
@@ -129,5 +130,14 @@ class ConversationFactory<T : ConversationMessage, U : ConversationMessageRespon
         messages.put(
             message.uniqueId, message
         )
+    }
+
+
+    override fun close()
+    {
+        outgoing.shutdown()
+        incoming.shutdown()
+
+        messages.cleanUp()
     }
 }
