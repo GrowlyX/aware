@@ -11,8 +11,7 @@ Extensive annotation-based [Redis](https://redis.com/) Pub-Sub wrapper for [lett
  - Aware uses a platform-level credential & serialization provider.
    * Aware currently ONLY supports [Gson](https://github.com/google/gson).
    * Aware credential & serialization providers can be configured by using `AwareHub#configure()`
- - Aware is an annotation-based.
-   * More traditional solutions will be implemented in the future.
+ - Aware is an annotation-based, but supports lambda-based subscriptions as well.
 
 ## Conversations:
 Aware has a conversation feature where A can contact B and await for a reply (which could possibly be empty).
