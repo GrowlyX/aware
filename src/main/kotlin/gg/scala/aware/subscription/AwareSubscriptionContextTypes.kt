@@ -3,6 +3,9 @@ package gg.scala.aware.subscription
 import java.lang.reflect.Method
 
 /**
+ * Defines several [AwareSubscriptionContextType]
+ * types.
+ *
  * @author GrowlyX
  * @since 3/8/2022
  */

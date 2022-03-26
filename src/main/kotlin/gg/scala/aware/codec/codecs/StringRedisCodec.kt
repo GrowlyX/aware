@@ -4,8 +4,8 @@ import gg.scala.aware.codec.WrappedRedisCodec
 import kotlin.reflect.KClass
 
 /**
- * Returns the provided string,
- * there's not really much to do here.
+ * Returns the provided string and interprets
+ * the packetId by using the first element split by a colon.
  *
  * @author GrowlyX
  * @since 3/7/2022

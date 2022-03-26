@@ -1,6 +1,9 @@
 package gg.scala.aware.subscription
 
 /**
+ * Handles the internal invocation
+ * of context [C] when given a message `V`.
+ *
  * @author GrowlyX
  * @since 3/8/2022
  */

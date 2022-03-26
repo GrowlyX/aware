@@ -20,7 +20,7 @@ Aware has a conversation feature where A can contact B and await for a reply (wh
 Conversations require you to create your own implementation of ConversationMessage & ConversationMessageResponse.
  - These models can contain anything which is serializable by the [Gson](https://github.com/google/gson) instance provided in your AwareHub configuration.
  - The response model must contain the `uniqueId` of the origin message to allow it to be processed back on the original application.
- 
+
 ### Channel naming:
 Conversation factories require a channel suffix, which will then used for both outgoing and incoming channels.
  - **Outgoing:**

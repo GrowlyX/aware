@@ -6,6 +6,9 @@ import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
 
 /**
+ * Allows for a builder-style method
+ * of creating a new [ConversationFactory].
+ *
  * @author GrowlyX
  * @since 3/10/2022
  */
