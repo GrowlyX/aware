@@ -13,7 +13,6 @@ import java.util.concurrent.CompletionStage
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.logging.Logger
 import kotlin.reflect.KClass
-import kotlin.reflect.jvm.kotlinFunction
 import kotlin.system.measureTimeMillis
 
 /**
@@ -96,8 +95,7 @@ class Aware<V : Any>(
         val methodContext =
             AwareSubscriptionContextTypes.METHOD.asT<Method>()
 
-        val methods = method.kotlinFunction
-            ?.annotations?.toList() ?: method.annotations.toList()
+        val methods = method.annotations.toList()
 
         val context = AwareSubscriptionContext(
             instance, method, methodContext, methods

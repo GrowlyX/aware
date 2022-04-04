@@ -6,6 +6,7 @@ import gg.scala.aware.thread.AwareThreadContext
 import io.lettuce.core.RedisClient
 import java.time.Duration
 import java.util.concurrent.Executors
+import java.util.concurrent.ForkJoinPool
 
 /**
  * @author GrowlyX
@@ -47,20 +48,25 @@ object AwareHub
         channel: String = aware.channel,
     )
     {
-        if (context == AwareThreadContext.SYNC)
-        {
+        val runnable = ctx@{
             aware.publishConnection.sync()
                 .apply {
                     setTimeout(DEF_TIMEOUT)
                 }
                 .publish(channel, message)
-        } else
-        {
-            aware.publishConnection.async()
-                .apply {
-                    setTimeout(DEF_TIMEOUT)
-                }
-                .publish(channel, message)
         }
+
+        val forkJoinPool = Thread.currentThread()
+            .name.contains("ForkJoinPool", true)
+
+        // We're not using async commands as its sort of messing stuff up
+        if (context == AwareThreadContext.SYNC || forkJoinPool)
+        {
+            runnable.invoke()
+            return
+        }
+
+        ForkJoinPool.commonPool()
+            .run { runnable.invoke() }
     }
 }

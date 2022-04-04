@@ -7,21 +7,30 @@ plugins {
 }
 
 group "gg.scala.aware"
-version "1.0.3"
+version "1.0.4"
 
 repositories {
     mavenCentral()
     mavenLocal()
+
+    maven {
+        name "Scala"
+        allowInsecureProtocol true
+        url "http://repository.scala.gg/repository/maven-releases/"
+
+        credentials {
+            username property("scala.credentials.username") as String
+            password property("scala.credentials.password") as String
+        }
+    }
 }
 
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
-    api "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
-
     api 'com.google.code.gson:gson:2.9.0'
 
     implementation 'com.github.ben-manes.caffeine:caffeine:2.9.3'
-    implementation "io.lettuce:lettuce-core:6.1.6.RELEASE"
+    api 'io.lettuce:lettuce-core:6.1.8.RELEASE'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
