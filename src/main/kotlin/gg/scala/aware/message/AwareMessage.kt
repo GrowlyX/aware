@@ -46,9 +46,16 @@ data class AwareMessage(
 
     inline fun <reified T> retrieve(key: String): T
     {
+        val value = content[key]
+
+        if (T::class == String::class)
+        {
+            return value as T
+        }
+
         return AwareHub.gson
             .invoke().fromJson(
-                content[key].toString(),
+                value.toString(),
                 T::class.java
             )
     }
@@ -57,6 +64,11 @@ data class AwareMessage(
     {
         val value = content[key]
             ?: return null
+
+        if (T::class == String::class)
+        {
+            return value as T
+        }
 
         return AwareHub.gson
             .invoke().fromJson(

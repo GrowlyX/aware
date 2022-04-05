@@ -109,7 +109,7 @@ class ConversationFactory<T : ConversationMessage, U : ConversationMessageRespon
             // received an END context
             if (context == ConversationContinuation.END)
             {
-                messages.invalidate(origin)
+                messages.invalidate(this.uniqueId)
             }
         }
 
