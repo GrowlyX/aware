@@ -21,7 +21,7 @@ data class AwareMessage(
         fun of(
             packet: String,
             aware: Aware<AwareMessage>,
-            vararg pair: Pair<String, Any>
+            vararg pair: Pair<String, Any?>
         ): AwareMessage
         {
             val message = AwareMessage(packet)
@@ -42,21 +42,26 @@ data class AwareMessage(
     lateinit var aware: Aware<AwareMessage>
 
     val content =
-        mutableMapOf<String, String>()
+        mutableMapOf<String, Any?>()
 
     inline fun <reified T> retrieve(key: String): T
     {
         return AwareHub.gson
             .invoke().fromJson(
-                content[key], T::class.java
+                content[key].toString(),
+                T::class.java
             )
     }
 
     inline fun <reified T> retrieveNullable(key: String): T?
     {
+        val value = content[key]
+            ?: return null
+
         return AwareHub.gson
             .invoke().fromJson(
-                content[key], T::class.java
+                value.toString(),
+                T::class.java
             )
     }
 
@@ -65,10 +70,9 @@ data class AwareMessage(
         return content.containsKey(key)
     }
 
-    fun assign(key: String, value: Any)
+    fun assign(key: String, value: Any?)
     {
-        content[key] = AwareHub.gson
-            .invoke().toJson(value)
+        content[key] = value
     }
 
     fun remove(key: String)
