@@ -49,12 +49,13 @@ object AwareHub
         channel: String = aware.channel,
     )
     {
-        val runnable = ctx@{
+        val runnable: (Boolean) -> Unit = ctx@{ timeout ->
             try
             {
                 aware.publishConnection.sync()
                     .apply {
-                        setTimeout(DEF_TIMEOUT)
+                        if (timeout)
+                            setTimeout(DEF_TIMEOUT)
                     }
                     .publish(channel, message)
             } catch (exception: Exception)
@@ -69,14 +70,13 @@ object AwareHub
             Thread.currentThread().name
         )
 
-        // We're not using async commands as its sort of messing stuff up
         if (context == AwareThreadContext.SYNC)
         {
-            runnable.invoke()
+            runnable.invoke(true)
             return
         }
 
         ForkJoinPool.commonPool()
-            .run { runnable.invoke() }
+            .run { runnable.invoke(false) }
     }
 }
