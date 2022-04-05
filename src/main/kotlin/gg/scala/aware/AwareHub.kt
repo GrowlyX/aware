@@ -7,6 +7,7 @@ import io.lettuce.core.RedisClient
 import java.time.Duration
 import java.util.concurrent.Executors
 import java.util.concurrent.ForkJoinPool
+import java.util.logging.Level
 
 /**
  * @author GrowlyX
@@ -49,18 +50,27 @@ object AwareHub
     )
     {
         val runnable = ctx@{
-            aware.publishConnection.sync()
-                .apply {
-                    setTimeout(DEF_TIMEOUT)
+            try
+            {
+                aware.publishConnection.sync()
+                    .apply {
+                        setTimeout(DEF_TIMEOUT)
+                    }
+                    .publish(channel, message)
+            } catch (exception: Exception)
+            {
+                aware.logger.log(Level.WARNING, exception) {
+                    "Something went wrong while trying to distribute a message."
                 }
-                .publish(channel, message)
+            }
         }
 
-        val forkJoinPool = Thread.currentThread()
-            .name.contains("ForkJoinPool", true)
+        println(
+            Thread.currentThread().name
+        )
 
         // We're not using async commands as its sort of messing stuff up
-        if (context == AwareThreadContext.SYNC || forkJoinPool)
+        if (context == AwareThreadContext.SYNC)
         {
             runnable.invoke()
             return
