@@ -49,13 +49,15 @@ object AwareHub
         channel: String = aware.channel,
     )
     {
-        val runnable: (Boolean) -> Unit = ctx@{ timeout ->
+        if (
+            context == AwareThreadContext.SYNC
+        )
+        {
             try
             {
                 aware.publishConnection.sync()
                     .apply {
-                        if (timeout)
-                            setTimeout(DEF_TIMEOUT)
+                        setTimeout(DEF_TIMEOUT)
                     }
                     .publish(channel, message)
             } catch (exception: Exception)
@@ -64,19 +66,13 @@ object AwareHub
                     "Something went wrong while trying to distribute a message."
                 }
             }
-        }
-
-        println(
-            Thread.currentThread().name
-        )
-
-        if (context == AwareThreadContext.SYNC)
-        {
-            runnable.invoke(true)
             return
         }
 
-        ForkJoinPool.commonPool()
-            .run { runnable.invoke(false) }
+        aware.publishConnection.async()
+            .apply {
+                setTimeout(DEF_TIMEOUT)
+            }
+            .publish(channel, message)
     }
 }

@@ -4,6 +4,7 @@ import gg.scala.aware.Aware
 import gg.scala.aware.annotation.Subscribe
 import gg.scala.aware.codec.WrappedRedisCodec
 import io.lettuce.core.pubsub.RedisPubSubListener
+import java.util.logging.Level
 
 /**
  * A wrapped form of [RedisPubSubListener] containing
@@ -54,6 +55,10 @@ class WrappedRedisPubSubListener<V : Any>(
             kotlin.runCatching {
                 context.contextType
                     .launchCasted(context, message)
+            }.onFailure {
+                aware.logger.log(Level.WARNING, it) {
+                    "[Aware] [Error] An exception was thrown on channel ${aware.channel}"
+                }
             }
         }
     }
