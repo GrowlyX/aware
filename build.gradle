@@ -3,11 +3,11 @@ import java.util.stream.Collectors
 plugins {
     id "maven-publish"
     id "com.github.johnrengelman.shadow" version "7.1.2"
-    id "org.jetbrains.kotlin.jvm" version "1.6.10"
+    id "org.jetbrains.kotlin.jvm" version "1.6.21"
 }
 
 group "gg.scala.aware"
-version "1.0.7"
+version "1.0.8"
 
 repositories {
     mavenCentral()
@@ -26,11 +26,11 @@ repositories {
 }
 
 dependencies {
-    api "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
-    api 'com.google.code.gson:gson:2.9.0'
+    compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.6.21'
+    compileOnly 'com.google.code.gson:gson:2.9.0'
 
     implementation 'com.github.ben-manes.caffeine:caffeine:3.0.6'
-    api 'io.lettuce:lettuce-core:6.1.8.RELEASE'
+    compileOnly 'io.lettuce:lettuce-core:6.1.8.RELEASE'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'

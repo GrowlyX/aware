@@ -55,7 +55,7 @@ data class AwareMessage(
 
         return AwareHub.gson
             .invoke().fromJson(
-                value.toString(),
+                value as String,
                 T::class.java
             )
     }
@@ -72,7 +72,7 @@ data class AwareMessage(
 
         return AwareHub.gson
             .invoke().fromJson(
-                value.toString(),
+                value as String,
                 T::class.java
             )
     }
