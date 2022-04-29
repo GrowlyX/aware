@@ -7,7 +7,7 @@ plugins {
 }
 
 group "gg.scala.aware"
-version "1.0.8"
+version "1.0.8.2"
 
 repositories {
     mavenCentral()
@@ -83,15 +83,6 @@ tasks.withType(GenerateMavenPom).all {
     }
 }
 
-String usernameValue = null
-
-try {
-    usernameValue = property("scala.credentials.username")
-} catch (Exception ignored)
-{
-
-}
-
 publishing {
     publications {
         shadow(MavenPublication) { publication ->
@@ -99,27 +90,18 @@ publishing {
         }
     }
 
-    // yes, you're an internal scala developer
-    if (usernameValue != null)
-    {
-        repositories {
-            maven {
-                name "Scala"
-                allowInsecureProtocol true
-                url "http://repository.scala.gg/repository/maven-releases/"
+    repositories {
+        maven {
+            name "Scala"
+            allowInsecureProtocol true
+            url "http://repository.scala.gg/repository/maven-releases/"
 
-                credentials {
-                    username usernameValue
-                    password property("scala.credentials.password") as String
-                }
+            credentials {
+                username property("scala.credentials.username") as String
+                password property("scala.credentials.password") as String
             }
         }
     }
 }
 
-tasks.build.dependsOn(shadowJar)
-
-if (usernameValue != null)
-{
-    tasks.build.dependsOn(publishShadowPublicationToScalaRepository)
-}
+tasks.build.dependsOn(shadowJar, publishShadowPublicationToScalaRepository)
