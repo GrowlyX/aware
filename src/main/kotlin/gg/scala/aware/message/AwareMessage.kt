@@ -3,6 +3,7 @@ package gg.scala.aware.message
 import gg.scala.aware.Aware
 import gg.scala.aware.AwareHub
 import gg.scala.aware.thread.AwareThreadContext
+import kotlin.reflect.KClass
 
 /**
  * A standardized "message" containing
@@ -44,11 +45,14 @@ data class AwareMessage(
     val content =
         mutableMapOf<String, Any?>()
 
-    inline fun <reified T> retrieve(key: String): T
+    @Suppress("UNCHECKED_CAST")
+    fun <T : Any> retrieve(
+        key: String, kClass: KClass<T>
+    ): T
     {
         val value = content[key]
 
-        if (T::class == String::class)
+        if (kClass == String::class)
         {
             return value as T
         }
@@ -56,8 +60,14 @@ data class AwareMessage(
         return AwareHub.gson
             .invoke().fromJson(
                 value as String,
-                T::class.java
+                kClass.java
             )
+    }
+
+
+    inline fun <reified T : Any> retrieve(key: String): T
+    {
+        return retrieve(key, T::class)
     }
 
     inline fun <reified T> retrieveNullable(key: String): T?

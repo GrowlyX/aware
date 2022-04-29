@@ -27,10 +27,13 @@ repositories {
 
 dependencies {
     compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.6.21'
+
     compileOnly 'com.google.code.gson:gson:2.9.0'
+    testCompileOnly 'com.google.code.gson:gson:2.9.0'
 
     implementation 'com.github.ben-manes.caffeine:caffeine:3.0.6'
     compileOnly 'io.lettuce:lettuce-core:6.1.8.RELEASE'
+    testCompileOnly 'io.lettuce:lettuce-core:6.1.8.RELEASE'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'

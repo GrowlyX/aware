@@ -7,23 +7,21 @@ import gg.scala.aware.AwareBuilder
 import gg.scala.aware.AwareHub
 import gg.scala.aware.annotation.ExpiresIn
 import gg.scala.aware.annotation.Subscribe
-import gg.scala.aware.uri.WrappedAwareUri
 import gg.scala.aware.codec.codecs.JsonRedisCodec
 import gg.scala.aware.codec.codecs.interpretation.AwareMessageCodec
 import gg.scala.aware.conversation.ConversationContinuation
 import gg.scala.aware.conversation.ConversationFactoryBuilder
 import gg.scala.aware.conversation.messages.ConversationMessage
 import gg.scala.aware.conversation.messages.ConversationMessageResponse
-import gg.scala.aware.thread.AwareThreadContext
 import gg.scala.aware.message.AwareMessage
+import gg.scala.aware.thread.AwareThreadContext
+import gg.scala.aware.uri.WrappedAwareUri
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.lang.Thread.sleep
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
-import kotlin.math.pow
-import kotlin.math.sqrt
 import kotlin.random.Random
 
 /**
@@ -32,132 +30,6 @@ import kotlin.random.Random
  */
 object AwareTest
 {
-    @Test
-    @Suppress("")
-    fun onAverage()
-    {
-        val inputs = listOf(1, 2, 3, 4).sorted()
-        println("Average: ${inputs.average()}")
-
-        val median = if (
-            inputs.size % 2 != 0
-        )
-        {
-            inputs[(inputs.size - 1) / 2]
-        } else
-        {
-            val firstHalf =
-                (inputs.size / 2) - 1
-
-            listOf(
-                inputs[firstHalf]
-                    .toDouble(),
-                inputs[firstHalf + 1]
-                    .toDouble()
-            ).average()
-        }
-
-        println("Median: $median")
-
-
-        val quartileOne = inputs[
-                (inputs.size + 1) / 4
-        ]
-
-        print((inputs.size + 1) / 4.0)
-
-        println(quartileOne)
-    }
-
-    @Test
-    @Disabled
-    fun onKiteTest2()
-    {
-        val sides = Pair(39.0, 89.0)
-
-        val calculated = sqrt(
-            -sides.first.pow(2) + sides.second.pow(2)
-        )
-
-        println()
-        println("Kite Test 2")
-        println("Answer: $calculated")
-    }
-
-    @Test
-    @Disabled
-    fun onKiteTest()
-    {
-        val angles = listOf(90, 122)
-        val total = 360
-
-        val calculated = (total - angles.sum()) / 2
-
-        println()
-        println("Kite Test 1")
-        println("Answer: $calculated")
-    }
-
-    @Test
-    @Disabled
-    fun onTrapezoidTest()
-    {
-        val medium = 77
-        val large = 93
-
-        println()
-        println("Trapezoid Test 1:")
-
-        println(
-            "Answer: ${medium - (large - medium)}"
-        )
-    }
-
-    @Test
-    @Disabled
-    fun onParallelogramTest2()
-    {
-        val angleOne = 228
-        val angleTwo = 97
-
-        val elements = listOf(2, 3)
-
-        val totalInternal = 360
-
-        val remaining =
-            totalInternal - (angleOne + angleTwo)
-
-        val denominator =
-            elements.sum()
-
-        println()
-        println("Parallelogram Test 2:")
-
-        for (element in elements)
-        {
-            val experimental =
-                element / denominator.toDouble()
-
-            println(
-                "$element: ${experimental * remaining}"
-            )
-        }
-    }
-
-    @Test
-    @Disabled
-    fun onParallelogramTest()
-    {
-        val initialAngle = 18
-        val totalInternal = 360
-
-        val other = (totalInternal - (initialAngle * 2)) / 2
-
-        println()
-        println("Parallelogram Test:")
-        println("$initialAngle, $other, $other")
-    }
-
     @Test
     @Disabled
     fun onPerformanceTest()
