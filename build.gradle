@@ -45,7 +45,7 @@ shadowJar {
 publishing {
     publications {
         shadow(MavenPublication) { publication ->
-            from components.kotlin
+            project.shadow.component(publication)
         }
     }
 
