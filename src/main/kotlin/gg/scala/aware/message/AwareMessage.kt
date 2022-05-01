@@ -59,7 +59,7 @@ data class AwareMessage(
 
         return AwareHub.gson
             .invoke().fromJson(
-                value as String,
+                value.toString(),
                 kClass.java
             )
     }
