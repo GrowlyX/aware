@@ -1,12 +1,12 @@
 package gg.scala.aware
 
 import com.google.gson.Gson
-import gg.scala.aware.uri.WrappedAwareUri
 import gg.scala.aware.thread.AwareThreadContext
+import gg.scala.aware.uri.WrappedAwareUri
 import io.lettuce.core.RedisClient
+import io.lettuce.core.resource.ClientResources
 import java.time.Duration
 import java.util.concurrent.Executors
-import java.util.concurrent.ForkJoinPool
 import java.util.logging.Level
 
 /**
@@ -19,6 +19,7 @@ object AwareHub
         .newSingleThreadScheduledExecutor()
 
     private lateinit var wrappedUri: WrappedAwareUri
+    private var client: RedisClient? = null
 
     // TODO: 3/7/2022 allow for multiple
     //  serialization providers
@@ -33,9 +34,22 @@ object AwareHub
         this.gson = provider
     }
 
-    fun newClient(): RedisClient
+    fun client(): RedisClient
     {
-        return RedisClient.create(wrappedUri.build())
+        if (client == null)
+        {
+            client = RedisClient.create(
+                ClientResources.create(),
+                this.wrappedUri.build()
+            )
+        }
+
+        return client!!
+    }
+
+    fun close()
+    {
+        client?.shutdown()
     }
 
     @JvmStatic

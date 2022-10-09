@@ -6,7 +6,7 @@ plugins {
 }
 
 group "gg.scala.aware"
-version "1.0.8.3"
+version "1.1.0"
 
 repositories {
     mavenCentral()
@@ -20,8 +20,9 @@ dependencies {
     testCompileOnly "com.google.code.gson:gson:2.9.0"
 
     implementation "com.github.ben-manes.caffeine:caffeine:3.1.0"
-    compileOnly "io.lettuce:lettuce-core:6.1.8.RELEASE"
-    testCompileOnly "io.lettuce:lettuce-core:6.1.8.RELEASE"
+
+    compileOnly "io.lettuce:lettuce-core:6.2.0.RELEASE"
+    testCompileOnly "io.lettuce:lettuce-core:6.2.0.RELEASE"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
@@ -53,6 +54,7 @@ publishing {
         maven {
             name "scala"
             url "${artifactory_contextUrl}/${artifactory_release}"
+
             credentials {
                 username "${artifactory_user}"
                 password "${artifactory_password}"
@@ -76,6 +78,5 @@ artifactory {
 
 tasks.build.dependsOn(
     shadowJar,
-    publishShadowPublicationToScalaRepository,
-    artifactoryPublish
+    publishShadowPublicationToScalaRepository
 )

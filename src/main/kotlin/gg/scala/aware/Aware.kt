@@ -41,7 +41,7 @@ class Aware<V : Any>(
 
     // we don't want them to be instantiated instantly.
     private val client by lazy {
-        AwareHub.newClient()
+        AwareHub.client()
     }
 
     fun internal() = client
@@ -126,17 +126,15 @@ class Aware<V : Any>(
 
     fun connect(): CompletionStage<Void>
     {
-        connection = client
-            .connectPubSub(codec)
-
+        connection = client.connectPubSub(codec)
         connection.addListener(
             WrappedRedisPubSubListener(this, codec)
         )
 
-        publishConnection = client
-            .connect(codec)
+        publishConnection = client.connect(codec)
 
-        return connection.async().subscribe(channel)
+        return connection.async()
+            .subscribe(channel)
             .thenRun {
                 for (subscription in subscriptions)
                 {
@@ -145,9 +143,10 @@ class Aware<V : Any>(
             }
     }
 
+    @Deprecated("Use AwareHub#shutdown on platform shutdown")
     fun shutdown()
     {
-        client.shutdown()
+
     }
 
     private fun scheduleRemoval(
