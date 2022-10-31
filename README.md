@@ -1,6 +1,5 @@
 # aware
 Extensive annotation-based [Redis](https://redis.com/) Pub-Sub wrapper for [lettuce](https://lettuce.io) written in [Kotlin](https://kotlinlang.org/).
- - Aware was written to be a replacement for the very dated [Banana](https://github.com/growlyx/banana) library.
  - Aware allows for both asynchronous and synchronous contexts.
  - Aware contain wrappers for the [RedisCodec<K, V>](https://lettuce.io/core/release/api/io/lettuce/core/codec/RedisCodec.html).
    * These codec wrappers are only used for message values, therefore they only accept one type, V. (`WrappedRedisCodec<V>`)
@@ -11,7 +10,7 @@ Extensive annotation-based [Redis](https://redis.com/) Pub-Sub wrapper for [lett
  - Aware uses a platform-level credential & serialization provider.
    * Aware currently ONLY supports [Gson](https://github.com/google/gson).
    * Aware credential & serialization providers can be configured by using `AwareHub#configure()`
- - Aware is an annotation-based, but supports lambda-based subscriptions as well.
+ - Aware is an annotation-based, but supports functional lambda-based subscriptions as well.
 
 ## Conversations:
 Aware has a conversation feature where A can contact B and await for a reply (which could possibly be empty).
