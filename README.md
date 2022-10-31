@@ -12,6 +12,9 @@ Extensive annotation-based [Redis](https://redis.com/) Pub-Sub wrapper for [lett
    * Aware credential & serialization providers can be configured by using `AwareHub#configure()`
  - Aware is an annotation-based, but supports functional lambda-based subscriptions as well.
 
+## Usage Examples:
+- Currently, there is one official open-sourced project that uses Aware: [Aware Messaging](https://github.com/GrowlyX/aware-messaging) 
+
 ## Conversations:
 Aware has a conversation feature where A can contact B and await for a reply (which could possibly be empty).
 
