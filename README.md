@@ -33,16 +33,16 @@ How to create a new ConversationFactory:
 val conversationFactory = ConversationFactoryBuilder
     .of<ConversationMessageImpl, ConversationResponseImpl>()
     // your channel suffix
-    .channel("big-monkey")
+    .channel("channel-name")
     // your timeout, this is not optional.
     .timeout(2L, TimeUnit.SECONDS) {
-        println("Lmao no response dam")
+        println("no response, timed out")
     }
     // what will be handled on the response of a message
     // the origin ConversationMessage is supplied as a lambda parameter
     .response {
         ConversationResponseImpl(
-            "on god", it.uniqueId
+            "hello world!", it.uniqueId
         )
     }
     // what will be handled when our backend receives a response to a message
@@ -115,12 +115,11 @@ val aware = AwareBuilder
 ```
 
 ## Future plans:
- - None yet! Message me on Discord (growly#4953) if you have any suggestions!
+ - None yet! Message me on Discord (Growly#4953) if you have any suggestions!
  
 ## Other information:
-lettuce-core is automatically shaded into the final shadowJar. [kotlin-stdlib](https://kotlinlang.org/api/latest/jvm/stdlib/) & kotlin-reflect are NOT.
- - Although aware has not been tested in a production environment, it has run perfectly fine under multiple tests.
-   - _All of aware's features have now been testing._
+lettuce-core is not shaded into the final shadowJar. [kotlin-stdlib](https://kotlinlang.org/api/latest/jvm/stdlib/) & kotlin-reflect are not either.
+ - Aware has been used in production environments (Minecraft backend) for more than 6 months now. We consider it stable.
 
 ## Note:
-If you're using this in a **closed-source** project, please add `GrowlyX` to the project's author section.
+This project is licensed under the MIT license. Please refer to the LICENSE file in the root directory for more information.
