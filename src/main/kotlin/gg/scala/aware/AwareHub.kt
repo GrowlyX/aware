@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import gg.scala.aware.thread.AwareThreadContext
 import gg.scala.aware.uri.WrappedAwareUri
 import io.lettuce.core.RedisClient
+import io.lettuce.core.RedisURI
 import io.lettuce.core.resource.ClientResources
 import java.time.Duration
 import java.util.concurrent.Executors
@@ -40,7 +41,11 @@ object AwareHub
         {
             client = RedisClient.create(
                 ClientResources.create(),
-                this.wrappedUri.build()
+                RedisURI
+                    .create(this.wrappedUri.build())
+                    .apply {
+                        timeout = Duration.ofSeconds(10L)
+                    }
             )
         }
 
