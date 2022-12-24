@@ -55,6 +55,7 @@ object AwareHub
     fun close()
     {
         client?.shutdown()
+        client = null
     }
 
     @JvmStatic
