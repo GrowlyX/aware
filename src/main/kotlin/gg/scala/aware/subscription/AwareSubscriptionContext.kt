@@ -1,5 +1,7 @@
 package gg.scala.aware.subscription
 
+import gg.scala.aware.annotation.Subscribe
+
 /**
  * Provides context to the method
  * caller about the containing class.
@@ -11,6 +13,7 @@ data class AwareSubscriptionContext<C>(
     val caller: Any,
     val context: C,
     val contextType: AwareSubscriptionContextType<C>,
+    val subscription: Subscribe,
     val annotations: List<Annotation>
 )
 {

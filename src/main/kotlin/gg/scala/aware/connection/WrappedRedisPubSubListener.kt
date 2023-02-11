@@ -27,7 +27,7 @@ class WrappedRedisPubSubListener<V : Any>(
 
         if (message == null)
         {
-            aware.logger.warning("[Aware] A null message was sent on $channel!")
+            aware.logger.warning("[redis] A null message was sent on $channel!")
             return
         }
 
@@ -39,38 +39,35 @@ class WrappedRedisPubSubListener<V : Any>(
             .let {
                 if (!aware.ignorePacketId)
                 {
-                    return@let it.filter { ctx ->
-                        ctx.byType<Subscribe>().any { subscribe ->
-                            subscribe.value.lowercase() == packetIdentifier
-                        }
+                    it.filter { ctx ->
+                        ctx.subscription.value.lowercase() == packetIdentifier
                     }
-                } else
-                {
-                    return@let it
-                }
+                } else it
             }
 
         for (context in matches)
         {
-            kotlin.runCatching {
-                context.contextType
-                    .launchCasted(context, message)
-            }.onFailure {
-                aware.logger.log(Level.WARNING, it) {
-                    "[Aware] [Error] An exception was thrown on channel ${aware.channel}"
+            kotlin
+                .runCatching {
+                    context.contextType
+                        .launchCasted(context, message)
                 }
-            }
+                .onFailure {
+                    aware.logger.log(Level.WARNING, it) {
+                        "[redis] An exception was thrown on channel ${aware.channel}"
+                    }
+                }
         }
     }
 
     override fun subscribed(channel: String, count: Long)
     {
-        aware.logger.info("[Aware] Subscribed through aware on \"${aware.channel}\".")
+        aware.logger.info("[redis] Subscribed to pub/sub on channel: ${aware.channel}")
     }
 
     override fun unsubscribed(channel: String, count: Long)
     {
-        aware.logger.info("[Aware] Unsubscribed from aware on \"${aware.channel}\".")
+        aware.logger.info("[redis] Unsubscribed from pub/sub on channel: ${aware.channel}.")
     }
 
     /**

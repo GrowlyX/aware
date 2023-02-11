@@ -56,14 +56,10 @@ class Aware<V : Any>(
             AwareSubscriptionContextTypes
                 .LAMBDA.asT<(V) -> Unit>()
 
-        val subscriptions = additionalAnnotations
-            .toMutableList().apply {
-                add(Subscribe(packet))
-            }
-
         val context = AwareSubscriptionContext(
-            this, lambda,
-            methodContext, subscriptions
+            this, lambda, methodContext,
+            Subscribe(packet),
+            additionalAnnotations.toList()
         )
 
         this.subscriptions.add(context)
@@ -97,15 +93,13 @@ class Aware<V : Any>(
 
         val methods = method.annotations.toList()
 
+        val subscribe = method
+            .getAnnotation(Subscribe::class.java)
+            ?: return
+
         val context = AwareSubscriptionContext(
-            instance, method, methodContext, methods
+            instance, method, methodContext, subscribe, methods
         )
-
-        val subscriptions = context
-            .byType<Subscribe>()
-
-        if (subscriptions.isEmpty())
-            return
 
         this.subscriptions.add(context)
     }

@@ -5,7 +5,11 @@ import gg.scala.aware.thread.AwareThreadContext
 import gg.scala.aware.uri.WrappedAwareUri
 import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisURI
+import io.lettuce.core.event.EventBus
 import io.lettuce.core.resource.ClientResources
+import io.lettuce.core.resource.Delay
+import io.lettuce.core.tracing.TraceContext
+import io.lettuce.core.tracing.Tracing
 import java.time.Duration
 import java.util.concurrent.Executors
 import java.util.logging.Level
@@ -44,7 +48,7 @@ object AwareHub
                 RedisURI
                     .create(this.wrappedUri.build())
                     .apply {
-                        timeout = Duration.ofSeconds(10L)
+                        timeout = DEF_TIMEOUT
                     }
             )
         }
@@ -59,7 +63,7 @@ object AwareHub
     }
 
     @JvmStatic
-    val DEF_TIMEOUT: Duration = Duration.ofSeconds(1L)
+    val DEF_TIMEOUT = Duration.ofSeconds(1L)!!
 
     fun <T : Any> publish(
         aware: Aware<T>,
@@ -76,9 +80,6 @@ object AwareHub
             try
             {
                 aware.publishConnection.sync()
-                    .apply {
-                        setTimeout(DEF_TIMEOUT)
-                    }
                     .publish(channel, message)
             } catch (exception: Exception)
             {
@@ -90,9 +91,6 @@ object AwareHub
         }
 
         aware.publishConnection.async()
-            .apply {
-                setTimeout(DEF_TIMEOUT)
-            }
             .publish(channel, message)
     }
 }
