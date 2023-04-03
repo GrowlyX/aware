@@ -63,7 +63,7 @@ object AwareHub
     }
 
     @JvmStatic
-    val DEF_TIMEOUT = Duration.ofSeconds(1L)!!
+    val DEF_TIMEOUT = Duration.ofSeconds(5L)!!
 
     fun <T : Any> publish(
         aware: Aware<T>,
