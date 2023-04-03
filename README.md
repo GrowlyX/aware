@@ -1,5 +1,5 @@
 # aware
-Extensive annotation-based [Redis](https://redis.com/) Pub-Sub wrapper for [lettuce](https://lettuce.io) written in [Kotlin](https://kotlinlang.org/).
+Extensive Kotlin-based wrapper for [Lettuce](https://lettuce.io).
  - Aware allows for both asynchronous and synchronous contexts.
  - Aware contain wrappers for the [RedisCodec<K, V>](https://lettuce.io/core/release/api/io/lettuce/core/codec/RedisCodec.html).
    * These codec wrappers are only used for message values, therefore they only accept one type, V. (`WrappedRedisCodec<V>`)
