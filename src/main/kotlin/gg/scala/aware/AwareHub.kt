@@ -3,8 +3,10 @@ package gg.scala.aware
 import com.google.gson.Gson
 import gg.scala.aware.thread.AwareThreadContext
 import gg.scala.aware.uri.WrappedAwareUri
+import io.lettuce.core.ClientOptions
 import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisURI
+import io.lettuce.core.TimeoutOptions
 import io.lettuce.core.resource.DefaultClientResources
 import java.time.Duration
 import java.util.concurrent.Executors
@@ -44,12 +46,19 @@ object AwareHub
                     .ioThreadPoolSize(4)
                     .computationThreadPoolSize(4)
                     .build(),
-                RedisURI
-                    .create(this.wrappedUri.build())
-                    .apply {
-                        timeout = DEF_TIMEOUT
-                    }
+                RedisURI.create(this.wrappedUri.build())
             )
+            client!!.options = ClientOptions.builder()
+                .timeoutOptions(
+                    TimeoutOptions.builder()
+                        .timeoutCommands(false)
+                        .fixedTimeout(
+                            Duration.ofSeconds(0L)
+                        )
+                        .build()
+                )
+                .autoReconnect(true)
+                .build()
         }
 
         return client!!
