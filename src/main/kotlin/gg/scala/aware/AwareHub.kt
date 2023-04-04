@@ -7,6 +7,7 @@ import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisURI
 import io.lettuce.core.event.EventBus
 import io.lettuce.core.resource.ClientResources
+import io.lettuce.core.resource.DefaultClientResources
 import io.lettuce.core.resource.Delay
 import io.lettuce.core.tracing.TraceContext
 import io.lettuce.core.tracing.Tracing
@@ -44,7 +45,10 @@ object AwareHub
         if (client == null)
         {
             client = RedisClient.create(
-                ClientResources.create(),
+                DefaultClientResources.builder()
+                    .ioThreadPoolSize(4)
+                    .computationThreadPoolSize(4)
+                    .build(),
                 RedisURI
                     .create(this.wrappedUri.build())
                     .apply {

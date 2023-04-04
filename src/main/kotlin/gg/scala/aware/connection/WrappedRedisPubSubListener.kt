@@ -90,5 +90,5 @@ class WrappedRedisPubSubListener<V : Any>(
 
     override fun message(
         pattern: String, channel: String, message: V?
-    ) = Unit
+    ) = message(channel, message)
 }
