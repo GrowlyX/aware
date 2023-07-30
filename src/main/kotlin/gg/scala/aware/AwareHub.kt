@@ -9,6 +9,7 @@ import io.lettuce.core.RedisURI
 import io.lettuce.core.TimeoutOptions
 import io.lettuce.core.resource.DefaultClientResources
 import java.time.Duration
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.logging.Level
 
@@ -68,10 +69,12 @@ object AwareHub
     {
         client?.shutdown()
         client = null
+
+        outboundReqPool.shutdownNow()
     }
 
     @JvmStatic
-    val DEF_TIMEOUT = Duration.ofSeconds(5L)!!
+    val outboundReqPool: ExecutorService = Executors.newCachedThreadPool()
 
     fun <T : Any> publish(
         aware: Aware<T>,
@@ -98,7 +101,9 @@ object AwareHub
             return
         }
 
-        aware.publishConnection.async()
-            .publish(channel, message)
+        outboundReqPool.submit {
+            aware.publishConnection.sync()
+                .publish(channel, message)
+        }
     }
 }
