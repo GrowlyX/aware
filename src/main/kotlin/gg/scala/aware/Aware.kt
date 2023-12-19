@@ -6,6 +6,7 @@ import gg.scala.aware.codec.WrappedRedisCodec
 import gg.scala.aware.connection.WrappedRedisPubSubListener
 import gg.scala.aware.subscription.AwareSubscriptionContext
 import gg.scala.aware.subscription.AwareSubscriptionContextTypes
+import io.lettuce.core.RedisURI
 import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
 import java.lang.reflect.Method
@@ -125,7 +126,18 @@ class Aware<V : Any>(
             WrappedRedisPubSubListener(this, codec)
         )
 
-        publishConnection = client.connect(codec)
+        publishConnection = if (AwareHub.publishUri != null)
+        {
+            client.connect(
+                codec,
+                RedisURI.create(
+                    AwareHub.publishUri!!.build()
+                )
+            )
+        } else
+        {
+            client.connect(codec)
+        }
 
         return connection.async()
             .subscribe(channel)

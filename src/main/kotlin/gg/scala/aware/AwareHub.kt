@@ -25,9 +25,29 @@ object AwareHub
     private lateinit var wrappedUri: WrappedAwareUri
     private var client: RedisClient? = null
 
+    /**
+     * When in master/replica configuration of Redis servers, PUBLISH
+     * messages from clients connected to replica instances are not directly
+     * propagated to clients connect to the master instance.
+     *
+     * As a temporary fix, we will set a custom redis instance URI (typically the
+     * master), to redirect PUBLISH messages to.
+     */
+    var publishUri: WrappedAwareUri? = null
+
     // TODO: 3/7/2022 allow for multiple
     //  serialization providers
     lateinit var gson: () -> Gson
+
+    fun configure(
+        wrappedUri: WrappedAwareUri,
+        publishUri: WrappedAwareUri,
+        provider: () -> Gson
+    )
+    {
+        this.wrappedUri = wrappedUri
+        this.gson = provider
+    }
 
     fun configure(
         wrappedUri: WrappedAwareUri,
