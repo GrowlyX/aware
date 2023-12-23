@@ -33,7 +33,7 @@ object AwareHub
      * As a temporary fix, we will set a custom redis instance URI (typically the
      * master), to redirect PUBLISH messages to.
      */
-    var publishUri: WrappedAwareUri? = null
+    var publishUri: RedisURI? = null
 
     // TODO: 3/7/2022 allow for multiple
     //  serialization providers
@@ -41,11 +41,12 @@ object AwareHub
 
     fun configure(
         wrappedUri: WrappedAwareUri,
-        publishUri: WrappedAwareUri,
+        publishUri: String,
         provider: () -> Gson
     )
     {
         this.wrappedUri = wrappedUri
+        this.publishUri = RedisURI.create(publishUri)
         this.gson = provider
     }
 

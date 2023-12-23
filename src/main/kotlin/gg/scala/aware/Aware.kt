@@ -129,10 +129,7 @@ class Aware<V : Any>(
         publishConnection = if (AwareHub.publishUri != null)
         {
             client.connect(
-                codec,
-                RedisURI.create(
-                    AwareHub.publishUri!!.build()
-                )
+                codec, AwareHub.publishUri!!
             )
         } else
         {
