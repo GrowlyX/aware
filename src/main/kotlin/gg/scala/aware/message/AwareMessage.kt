@@ -42,8 +42,7 @@ data class AwareMessage(
     @Transient
     lateinit var aware: Aware<AwareMessage>
 
-    val content =
-        mutableMapOf<String, Any?>()
+    val content = mutableMapOf<String, String>()
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> retrieve(
@@ -64,7 +63,6 @@ data class AwareMessage(
             )
     }
 
-
     inline fun <reified T : Any> retrieve(key: String): T
     {
         return retrieve(key, T::class)
@@ -82,7 +80,7 @@ data class AwareMessage(
 
         return AwareHub.gson
             .invoke().fromJson(
-                value as String,
+                value,
                 T::class.java
             )
     }
@@ -94,7 +92,7 @@ data class AwareMessage(
 
     fun assign(key: String, value: Any?)
     {
-        content[key] = value
+        content[key] = AwareHub.gson().toJson(value)
     }
 
     fun remove(key: String)
